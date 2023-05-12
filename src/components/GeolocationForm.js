@@ -1,53 +1,47 @@
-"use client"
 import { ChevronDoubleRightIcon, ChevronDoubleLeftIcon } from '@heroicons/react/solid';
 import Alert from '@mui/material/Alert';
-import { handleSubmit } from '../_action';
+import { useFormik } from 'formik';
 
-import {useReducer} from 'react';
 
 export function GeolocationForm ({setFormId}) {
+   
 
-const formReducer = (state, action) => {
-    switch(action.type){
-        case "longitude":
-            return {
-                ...state,
-                longitude: state.val
-            }
+const formik = useFormik({
 
-        case "latitude":
-            return {
-                ...state,
-                latitude: state.val
-            }
-        case "collection_date":
-            return {
-                ...state,
-                latitude: state.value
-            }
+    initialValues: {
+        collection_date: new Intl.DateTimeFormat('fr-CA').format(new Date('5/16/2023')),
+        latitude: '-3.233324',
+        longitude: '',
+    },
 
-        default:
-            return state
-}
-} 
+    onSubmit: ({collection_date, latitude, longitude}) => {
 
-const [formState, dispatch] = useReducer(formReducer, {
-    longitude:"",
-    latitude: "",
-    collection_date: new Date()
-})
+    console.log({
+        collection_date,
+        latitude,
+        longitude
+    })
+    
+    setFormId(prev => (prev + 1))
+
+    },
+
+    handleChange: (e) => {
+        console.log({e:e.target.value})
+    }
+
+    });
 
 const handlePrevious = () => {
     setFormId(prev => (prev - 1))
 }
 
-const handleFormSubmit = () => {
-    setFormId(prev => (prev + 1))
-}
+
+// console.log({formik})
 
 return (
     <form
-    action={handleSubmit(handleFormSubmit)}
+    onSubmit={formik.handleSubmit}
     name='geolocation_form'
     className='flex flex-col w-full items-start justify-start gap-3'
     
@@ -66,8 +60,8 @@ return (
         <input
             type="date"
             required
-            value={formState.collection_date}
-            onChange={(e) => {dispatch({type: "collection_date", value: e.target.value})}}    
+            onChange={formik.handleChange}
+            value={formik.values.collection_date}
             name="collection_date"
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
         />
@@ -87,9 +81,9 @@ return (
             </label>
             <input
                 type="text"
-                required
-                value={formState.longitude}    
-                onChange={(e) => {dispatch({type: "longitude", val: e.target.value})}}
+                required  
+                onChange={formik.handleChange}
+                values={formik.values.longitude}
                 name="longitude"
                 className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
@@ -108,8 +102,8 @@ return (
             <input
                 type="text"
                 required
-                value={formState.latitude}
-                onChange={(e) => {dispatch({type: "latitude", val: e.target.value})}}
+                onChange={formik.handleChange}
+                value={formik.values.latitude}
                 name="latitude"
                 className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />

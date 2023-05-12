@@ -1,6 +1,3 @@
-"use client"
-
-import { handleSubmit } from '../_action';
 
 import {
 	ChevronDoubleRightIcon,
@@ -8,8 +5,14 @@ import {
 } from '@heroicons/react/solid';
 
 import Select from 'react-select';
+// import { useFormik } from 'formik'
+
 
 export function BasicDetailsForm ({setFormId}) {
+
+    const handleSubmit = () => {
+
+    }
 
     return(
      <>
@@ -19,7 +22,7 @@ export function BasicDetailsForm ({setFormId}) {
         <form
 
         className='flex flex-col w-full items-start justify-start gap-3'
-        action={handleSubmit}>
+        onSubmit={handleSubmit}>
 
         {/* Facility Official Name */}
         <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>

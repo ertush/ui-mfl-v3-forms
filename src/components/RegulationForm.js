@@ -8,4 +8,3 @@ export function RegulationForm() {
   )
 }
 
-export default RegulationForm

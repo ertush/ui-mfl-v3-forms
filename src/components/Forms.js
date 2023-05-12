@@ -10,10 +10,11 @@ import StepLabel from '@mui/material/StepLabel';
 
 import { BasicDetailsForm } from './BasicDeatilsForm';
 import { GeolocationForm } from './GeolocationForm';
+import { HumanresourcesForm } from './HumanresourcesForm';
 // import { FacilityContactsForm } from './FacilityContactsForm';
 
 export function Form () {
-    const [formId, setFormId] = useState(0);
+    const [formId, setFormId] = useState(1);
 
     const steps = [
       'Basic Details',
@@ -61,16 +62,16 @@ export function Form () {
 									style={{ minHeight: '250px' }}>
 						{
                           formId == 0 &&              
-                         <BasicDetailsForm />
+                         <BasicDetailsForm setFormId={setFormId}/>
                         }
-                        {/* {
+                        {
                             formId == 1 &&    
-                          <GeolocationForm />
+                          <GeolocationForm setFormId={setFormId} />
                         } 
                         {
                             formId == 2 &&    
-                          <GeolocationForm />
-                        }  */}
+                          <HumanresourcesForm setFormId={setFormId} />
+                        } 
                         {/* {     
                         case 'Facility Contacts':
                           return <FacilityContactsForm />
