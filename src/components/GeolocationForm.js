@@ -1,47 +1,95 @@
 import { ChevronDoubleRightIcon, ChevronDoubleLeftIcon } from '@heroicons/react/solid';
 import Alert from '@mui/material/Alert';
-import { useFormik } from 'formik';
+import { useEffect, useReducer, useContext, useRef } from 'react';
+import { FormContext } from './Forms';
+import Select from 'react-select';
 
 
-export function GeolocationForm ({setFormId}) {
+export function GeolocationForm () {
+
+const setFormId = useContext(FormContext);
+
+const facilityTypeRef = useRef(null);
+ 
+const initialFormValues = {
+    collection_date: '',
+    longitude: '',
+    latitude: '',
+    facility_type: ''
+}
    
+const formReducer = (state, action) => {
 
-const formik = useFormik({
+    if(Object.keys(initialFormValues).includes(action.type)){
+        return {
+                ...state,
+                [action.type]: action.value
+            }
+    } else{
+        return state
+    }
+}
 
-    initialValues: {
-        collection_date: new Intl.DateTimeFormat('fr-CA').format(new Date('5/16/2023')),
-        latitude: '-3.233324',
-        longitude: '',
-    },
 
-    onSubmit: ({collection_date, latitude, longitude}) => {
-
-    console.log({
-        collection_date,
-        latitude,
-        longitude
-    })
+const [formState, dispatch] = useReducer(formReducer, initialFormValues)
     
-    setFormId(prev => (prev + 1))
 
-    },
-
-    handleChange: (e) => {
-        console.log({e:e.target.value})
+useEffect(() => {
+   
+    if(window){
+        dispatch({type:'collection_date', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.collection_date })
+        dispatch({type:'longitude', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.longitude})
+        dispatch({type:'latitude', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.latitude})
+       
     }
 
-    });
+    if(facilityTypeRef.current !== null) {
+        facilityTypeRef.current.setValue(JSON.parse(window.localStorage.getItem('geoLocationForm'))?.facility_type, 'set-value')
+    }
+
+
+},[])   
+
+useEffect(() => {
+  
+if( window && 
+    formState.collection_date !== '' &&
+    formState.longitude !== '' &&
+    formState.latitude !== '' &&
+    formState.facility_type !== ''
+    ){
+
+    // console.log({formState})
+
+    window.localStorage.setItem('geoLocationForm', JSON.stringify({
+        collection_date: formState.collection_date,
+        longitude: formState.longitude,
+        latitude: formState.latitude,
+        facility_type: formState.facility_type
+    }))
+
+    // console.log({label: formState.facility_type.label, value:formState.facility_type.value})
+
+}
+
+}, [formState.collection_date, formState.longitude, formState.latitude, formState.facility_type])
 
 const handlePrevious = () => {
     setFormId(prev => (prev - 1))
 }
 
 
-// console.log({formik})
+const handleSubmit = (e) => {
+
+    e.preventDefault();
+
+    // console.log({...formState});
+    setFormId(prev => (prev + 1));
+}
 
 return (
     <form
-    onSubmit={formik.handleSubmit}
+    onSubmit={handleSubmit}
     name='geolocation_form'
     className='flex flex-col w-full items-start justify-start gap-3'
     
@@ -60,8 +108,11 @@ return (
         <input
             type="date"
             required
-            onChange={formik.handleChange}
-            value={formik.values.collection_date}
+            onChange={(e) => {
+                
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.collection_date}
             name="collection_date"
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
         />
@@ -82,10 +133,13 @@ return (
             <input
                 type="text"
                 required  
-                onChange={formik.handleChange}
-                values={formik.values.longitude}
+                onChange={(e) => {
+                    
+                    dispatch({type:e.target.name, value: e.target.value})
+                }}
+                value={formState.longitude}
                 name="longitude"
-                className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                className='flex-none w-full bg-gray-50 roundcollection_dateed p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
         </div>
 
@@ -102,10 +156,39 @@ return (
             <input
                 type="text"
                 required
-                onChange={formik.handleChange}
-                value={formik.values.latitude}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: e.target.value})
+                }}
+                value={formState.latitude}
                 name="latitude"
                 className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+            />
+        </div>
+
+        <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+            <label
+            htmlFor='facility_type'
+            className='text-gray-600 capitalize text-sm'>
+            Facility Type{' '}
+                <span className='text-medium leading-12 font-semibold'>
+                    {' '}
+                    *
+                </span>
+            </label>
+            
+            <Select
+            ref={facilityTypeRef}
+            options={[{value: 1, label:"MOH"}, {value: 2, label:"Private"}, {value: 3, label:"NGO"}]}
+            required
+            placeholder='Select a facility type...'
+            onChange={({label, value}) => {
+
+              
+                dispatch({type:'facility_type', value:{label, value}})
+            }}
+            
+            name='facility_type'
+            className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
             />
         </div>
     <>{!1 && <Alert severity="error" sx={{width:'100%'}}> Please enter the right coordinates</Alert>}</>

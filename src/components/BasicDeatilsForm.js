@@ -5,13 +5,78 @@ import {
 } from '@heroicons/react/solid';
 
 import Select from 'react-select';
-// import { useFormik } from 'formik'
+
+import { FormContext } from './Forms';
+
+import { useReducer } from 'react'
 
 
-export function BasicDetailsForm ({setFormId}) {
+export function BasicDetailsForm () {
+    
+    
+    const setFormId = useContext(FormContext);
+
+    const initialFormState = {
+        official_name: "",
+        name: "",
+        facility_type: "",
+        facility_type_details: "",
+        operation_status: "",
+        date_established: "",
+        accredited_lab_iso_15189: false,
+        owner_type: "",
+        owner: "",
+        keph_level: "",
+        number_of_beds: 0,
+        number_of_inpatient_beds:0,
+        number_of_cots: 0,
+        number_of_emergency_casualty_beds: 0,
+        number_of_icu_beds: 0,
+        number_of_hdu_beds: 0,
+        number_of_maternity_beds: 0,
+        number_of_isolation_beds: 0,
+        number_of_general_theatres: 0,
+        number_of_maternity_theatres: 0,
+        facility_catchment_population: 0,
+        reporting_in_dhis: false,
+        nhif_accreditation: false,
+        is_classified: false,
+        open_whole_day: false,
+        open_late_night: false,
+        open_public_holidays: false,
+        open_weekends: false,
+        open_normal_day: false,
+        county_id: "",
+        sub_county_id: "",
+        constituency_id: "",
+        ward: "",
+        town_name: "",
+        plot_number: "",
+        nearest_landmark: "",
+        location_desc: "",
+    
+    }
+
+    const formReducer = (state, action) => {
+        if(Object.keys(initialFormValues).includes(action.type)){
+            return {
+                    ...state,
+                    [action.type]: action.value
+                }
+        } else{
+            return state
+        }
+    }
+
+    const [formState, dispatch] = useReducer(formReducer, initialFormState)
 
     const handleSubmit = () => {
+        console.log({...formState})
+    }
 
+
+    const handlePrevious = () => {
+        setFormId(prev => (prev - 1))
     }
 
     return(
@@ -38,7 +103,8 @@ export function BasicDetailsForm ({setFormId}) {
             <input
             required
             type='text'
-            onChange={() => null}
+            value={formState.official_name}
+            onChange={(e) => {dispatch({[e.target.name]:e.target.value})}}
             name='official_name'
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
@@ -908,7 +974,7 @@ export function BasicDetailsForm ({setFormId}) {
 
         {/* Cancel & Geolocation */}
         <div className='flex justify-between items-center w-full'>
-            <button className='flex items-center justify-start space-x-2 p-1 border-2 border-black rounded px-2'>
+            <button onClick={handlePrevious} className='flex items-center justify-start space-x-2 p-1 border-2 border-black rounded px-2'>
             <ChevronDoubleLeftIcon className='w-4 h-4 text-black' />
             <span className='text-medium font-semibold text-black '>
                 Cancel

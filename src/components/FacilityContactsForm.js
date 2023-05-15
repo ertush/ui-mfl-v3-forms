@@ -1,11 +1,7 @@
 
-
 export function FacilityContactsForm() {
   return (
-    <div>
-      FacilityContactsForm
-    </div>
+	<div>FacilityContactsForm</div>
   )
 }
-
 

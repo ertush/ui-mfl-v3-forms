@@ -1,7 +1,7 @@
 
 "use client"
 
-import {useState} from 'react';
+import {useState, createContext} from 'react';
 
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
@@ -11,20 +11,24 @@ import StepLabel from '@mui/material/StepLabel';
 import { BasicDetailsForm } from './BasicDeatilsForm';
 import { GeolocationForm } from './GeolocationForm';
 import { HumanresourcesForm } from './HumanresourcesForm';
+
 // import { FacilityContactsForm } from './FacilityContactsForm';
 
-export function Form () {
-    const [formId, setFormId] = useState(1);
+export const FormContext  = createContext(() => null)
 
-    const steps = [
-      'Basic Details',
-      'Geolocation',
-      'Facility Contacts',
-      'Regulation',
-      'Services',
-      'Infrastructure',
-      'Human resources'
-  ];
+export function Form () {
+
+  const [formId, setFormId] = useState(1);
+
+  const steps = [
+    'Basic Details',
+    'Geolocation',
+    'Facility Contacts',
+    'Regulation',
+    'Services',
+    'Infrastructure',
+    'Human resources'
+];
 
     return (
        <div className='border border-gray-200 rounded p-3 pb-4 flex flex-col justify-center items-center w-full'>
@@ -57,38 +61,41 @@ export function Form () {
 
               {/* Stepper Body */}
               <div className='flex flex-col justify-center items-start px-1 md:px-4 w-full '>
-								<div
-									className=' w-full flex flex-col items-start justify-start p-3 rounded border border-gray-300/70 bg-gray-50'
-									style={{ minHeight: '250px' }}>
-						{
-                          formId == 0 &&              
-                         <BasicDetailsForm setFormId={setFormId}/>
-                        }
-                        {
-                            formId == 1 &&    
-                          <GeolocationForm setFormId={setFormId} />
-                        } 
-                        {
-                            formId == 2 &&    
-                          <HumanresourcesForm setFormId={setFormId} />
-                        } 
-                        {/* {     
-                        case 'Facility Contacts':
-                          return <FacilityContactsForm />
-                        case 'Regulation':
-                          return <RegulationFrom />
-                        case 'Services':
-                          return <ServicesFrom />
-                        case 'Infrastructure':
-                          return <InfrastructureForm />
-                        case 'Human resources':
-                          return <HumanresourcesForm />
-                        default:
-                           return <div className='hidden'></div>
-                      }
-                 */}
-                   
-                  </div>
+                  <FormContext.Provider value={setFormId}>
+                      <div
+                        className=' w-full flex flex-col items-start justify-start p-3 rounded border border-gray-300/70 bg-gray-50'
+                        style={{ minHeight: '250px' }}>
+                  {
+                                formId == 0 &&              
+                                <BasicDetailsForm />
+                              }
+                              {
+                                  formId == 1 && 
+                                  <GeolocationForm />   
+                              } 
+                              {
+                                  formId == 2 &&    
+                                  <HumanresourcesForm />
+                                
+                              } 
+                              {/* {     
+                              case 'Facility Contacts':
+                                return <FacilityContactsForm />
+                              case 'Regulation':
+                                return <RegulationFrom />
+                              case 'Services':
+                                return <ServicesFrom />
+                              case 'Infrastructure':
+                                return <InfrastructureForm />
+                              case 'Human resources':
+                                return <HumanresourcesForm />
+                              default:
+                                  return <div className='hidden'></div>
+                            }
+                        */}
+                          
+                        </div>
+                    </FormContext.Provider>
                 </div>
 
     </div>
