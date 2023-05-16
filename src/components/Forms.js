@@ -65,7 +65,7 @@ export function Form () {
                       <div
                         className=' w-full flex flex-col items-start justify-start p-3 rounded border border-gray-300/70 bg-gray-50'
                         style={{ minHeight: '250px' }}>
-                  {
+                           {
                                 formId == 0 &&              
                                 <BasicDetailsForm />
                               }
@@ -78,21 +78,7 @@ export function Form () {
                                   <HumanresourcesForm />
                                 
                               } 
-                              {/* {     
-                              case 'Facility Contacts':
-                                return <FacilityContactsForm />
-                              case 'Regulation':
-                                return <RegulationFrom />
-                              case 'Services':
-                                return <ServicesFrom />
-                              case 'Infrastructure':
-                                return <InfrastructureForm />
-                              case 'Human resources':
-                                return <HumanresourcesForm />
-                              default:
-                                  return <div className='hidden'></div>
-                            }
-                        */}
+                             
                           
                         </div>
                     </FormContext.Provider>

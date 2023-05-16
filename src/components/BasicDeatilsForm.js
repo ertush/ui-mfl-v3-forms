@@ -13,7 +13,6 @@ import { useReducer } from 'react'
 
 export function BasicDetailsForm () {
     
-    
     const setFormId = useContext(FormContext);
 
     const initialFormState = {
@@ -23,7 +22,7 @@ export function BasicDetailsForm () {
         facility_type_details: "",
         operation_status: "",
         date_established: "",
-        accredited_lab_iso_15189: false,
+        accredited_lab_iso_15189: null,
         owner_type: "",
         owner: "",
         keph_level: "",
@@ -38,14 +37,14 @@ export function BasicDetailsForm () {
         number_of_general_theatres: 0,
         number_of_maternity_theatres: 0,
         facility_catchment_population: 0,
-        reporting_in_dhis: false,
-        nhif_accreditation: false,
-        is_classified: false,
-        open_whole_day: false,
-        open_late_night: false,
-        open_public_holidays: false,
-        open_weekends: false,
-        open_normal_day: false,
+        reporting_in_dhis: null,
+        nhif_accreditation: null,
+        is_classified: null,
+        open_whole_day: null,
+        open_late_night: null,
+        open_public_holidays: null,
+        open_weekends: null,
+        open_normal_day: null,
         county_id: "",
         sub_county_id: "",
         constituency_id: "",
@@ -54,11 +53,12 @@ export function BasicDetailsForm () {
         plot_number: "",
         nearest_landmark: "",
         location_desc: "",
+        facility_checklist_document: null
     
     }
 
     const formReducer = (state, action) => {
-        if(Object.keys(initialFormValues).includes(action.type)){
+        if(Object.keys(initialFormState).includes(action.type)){
             return {
                     ...state,
                     [action.type]: action.value
@@ -69,6 +69,56 @@ export function BasicDetailsForm () {
     }
 
     const [formState, dispatch] = useReducer(formReducer, initialFormState)
+
+    
+useEffect(() => {
+   
+    if(window){
+        Object.keys(initialFormState).forEach((field) => {
+
+            dispatch({type:`${field}`, value:JSON.parse(window.localStorage.getItem('basicDetailsForm'))[field] })
+            
+        })
+       
+
+        
+       
+    }
+
+    if(facilityTypeRef.current !== null) {
+        facilityTypeRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.facility_type, 'set-value')
+    }
+
+
+},[])   
+
+useEffect(() => {
+  
+if( window && 
+    formState.collection_date !== '' &&
+    formState.longitude !== '' &&
+    formState.latitude !== '' &&
+    formState.facility_type !== '' &&
+    formState.accredited_lab_iso_15189 !== null &&
+    formState.is_classified !== null
+    ){
+
+    // console.log({formState})
+
+    window.localStorage.setItem('geoLocationForm', JSON.stringify({
+        collection_date: formState.collection_date,
+        longitude: formState.longitude,
+        latitude: formState.latitude,
+        facility_type: formState.facility_type,
+        accredited_lab_iso_15189: formState.accredited_lab_iso_15189,
+        is_classified: formState.is_classified
+    }))
+
+    // console.log({label: formState.facility_type.label, value:formState.facility_type.value})
+
+}
+
+}, [formState.collection_date, formState.longitude, formState.latitude, formState.facility_type, formState.accredited_lab_iso_15189, formState.is_classified])
 
     const handleSubmit = () => {
         console.log({...formState})
@@ -104,7 +154,7 @@ export function BasicDetailsForm () {
             required
             type='text'
             value={formState.official_name}
-            onChange={(e) => {dispatch({[e.target.name]:e.target.value})}}
+            onChange={(e) => {dispatch({type:e.target.name, value:e.target.value})}}
             name='official_name'
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
@@ -123,8 +173,8 @@ export function BasicDetailsForm () {
             <input
             required
             type='text'
-        
-            onChange={() => {}}
+            value={formState.name}
+            onChange={(e) => {dispatch({type:e.target.name, value:e.target.value})}}
             name='name'
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
@@ -146,7 +196,9 @@ export function BasicDetailsForm () {
             options={[{value: 1, label:"MOH"}, {value: 2, label:"Private"}, {value: 3, label:"NGO"}]}
             required
             placeholder='Select a facility type...'
-            onChange={(e) => null}
+            onChange={({label, value}) => {
+                dispatch({type:'facility_type', value:{label, value}})
+            }}
             name='facility_type'
             className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
             />
@@ -167,7 +219,9 @@ export function BasicDetailsForm () {
             options={[{value: 1, label:"gov"}, {value: 2, label:"phamarcy"}, {value: 3, label:"clinic"}]}
             required
             placeholder='Select a facility type details...'
-            onChange={ev => null}
+            onChange={({label, value}) => {
+                dispatch({type:'facility_type_details', value:{label, value}})
+            }}
             name='facility_type_details'
             className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
             />
@@ -197,6 +251,9 @@ export function BasicDetailsForm () {
                 },
             ]}
             required
+            onChange={({label, value}) => {
+                dispatch({type:'operation_status', value:{label, value}})
+            }}
             placeholder='Select an operation status...'
             name='operation_status'
             className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
@@ -216,6 +273,7 @@ export function BasicDetailsForm () {
             </label>
             <input
             required
+            onChange={(e) => {dispatch({type:e.target.name, value:e.target.value})}}
             type='date'
             name='date_established'
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
@@ -231,23 +289,25 @@ export function BasicDetailsForm () {
             </label>
             <span className='flex items-center gap-x-1'>
             <input
-                type='radio'
-                value={true}
-                defaultChecked={true}
+                type='radio' 
                 name='accredited_lab_iso_15189'
                 id='open_whole_day_yes'
-                onChange={(ev) => {}}
+                checked = {formState.accredited_lab_iso_15189 !== null ? Boolean(formState.accredited_lab_iso_15189) : false}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: true})
+                }}
             />
             <small className='text-gray-700'>Yes</small>
             </span>
             <span className='flex items-center gap-x-1'>
             <input
                 type='radio'
-                value={false}
-                defaultChecked={false}
                 name='accredited_lab_iso_15189'
                 id='open_whole_day_no'
-                onChange={(ev) => {}}
+                checked={formState.accredited_lab_iso_15189 !== null ? !Boolean(formState.accredited_lab_iso_15189) : false}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: false})
+                }}  
             />
             <small className='text-gray-700'>No</small>
             </span>
@@ -269,7 +329,9 @@ export function BasicDetailsForm () {
             required
             placeholder='Select owner..'
             name='owner_type'
-            onChange={(e) => null}
+            onChange={({label, value}) => {
+                dispatch({type:'owner_type', value:{label, value}})
+            }}
             className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
             />
         </div>
@@ -289,6 +351,9 @@ export function BasicDetailsForm () {
             options={[{value: 1, label:"JKO"}, {value: 2, label:"CLB"}, {value: 3, label:"TYO"}]}
             required
             placeholder='Select an owner..'
+            onChange={({label, value}) => {
+                dispatch({type:'owner', value:{label, value}})
+            }}
             name='owner'
             className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
             />
@@ -302,9 +367,11 @@ export function BasicDetailsForm () {
             KEPH Level
             </label>
             <Select
-            
             options={[{value: 1, label:"DLP"}, {value: 2, label:"XRT"}, {value: 3, label:"NGO"}]}
             isOptionDisabled={(option) => true}
+            onChange={({label, value}) => {
+                dispatch({type:'owner', value:{label, value}})
+            }}
             placeholder='Select a KEPH Level..'
             name='keph_level'
             className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
@@ -327,7 +394,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='number_of_beds'
-            
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.number_of_beds}
             readOnly
             
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
@@ -353,8 +423,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='number_of_inpatient_beds'
-            onChange={e => null}
-            
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.number_of_inpatient_beds}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             <label className='text-red-500 mt-1'></label>
@@ -378,7 +450,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='no_cots'
-            onChange={e => null}
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.no_cots}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             <label className='text-red-500 mt-1'></label>
@@ -400,7 +475,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='number_of_emergency_casualty_beds'
-            onChange={e => null}
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.number_of_emergency_casualty_beds}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             <label className='text-red-500 mt-1'></label>
@@ -424,7 +502,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='number_of_icu_beds'
-            onChange={e => null}
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.number_of_icu_beds}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             <label className='text-red-500 mt-1'></label>
@@ -448,7 +529,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='number_of_hdu_beds'
-            onChange={e => null}
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.number_of_hdu_beds}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             <label className='text-red-500 mt-1'></label>
@@ -471,7 +555,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='number_of_maternity_beds'
-            onChange={e => null}
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.number_of_maternity_beds}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             <label  className='text-red-500 mt-1'></label>
@@ -494,7 +581,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='number_of_isolation_beds'
-            onChange={e => null}
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.number_of_isolation_beds}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             <label className='text-red-500 mt-1'></label>
@@ -517,7 +607,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='number_of_general_theatres'
-            onChange={e => null}
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.number_of_general_theatres}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             <label className='text-red-500 mt-1'></label>
@@ -540,7 +633,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='number_of_maternity_theatres'
-            onChange={e => null}
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.number_of_maternity_theatres}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             <label className='text-red-500 mt-1'></label>
@@ -563,7 +659,10 @@ export function BasicDetailsForm () {
             type='number'
             min={0}
             name='facility_catchment_population'
-            onChange={e => null}
+            onChange={(e) => {
+                dispatch({type:e.target.name, value: e.target.value})
+            }}
+            value={formState.facility_catchment_population}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             <label  className='text-red-500 mt-1'></label>
@@ -580,8 +679,10 @@ export function BasicDetailsForm () {
             <span className='flex items-center gap-x-1'>
             <input
                 type='radio'
-                value={true}
-                defaultChecked={true}
+                checked={formState.reporting_in_dhis !== null ? Boolean(formState.reporting_in_dhis) : false}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: true})
+                }}
                 name='reporting_in_dhis'
                 id='reporting_in_dhis_yes'
                 
@@ -591,8 +692,10 @@ export function BasicDetailsForm () {
             <span className='flex items-center gap-x-1'>
             <input
                 type='radio'
-                value={false}
-                defaultChecked={false}
+                checked={formState.reporting_in_dhis !== null ? !Boolean(formState.reporting_in_dhis) : false}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: false})
+                }}  
                 name='reporting_in_dhis'
                 id='reporting_in_dhis_no'
                 
@@ -616,6 +719,9 @@ export function BasicDetailsForm () {
             options={[{value: 1, label:"Not admitting"}, {value: 2, label:"Admission"}, {value: 3, label:"None"}]}
             required
             placeholder='Select an admission status..'
+            onChange={({label, value}) => {
+                dispatch({type:'admission_status', value:{label, value}})
+            }}
             name='admission_status'
             className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
             />
@@ -632,8 +738,10 @@ export function BasicDetailsForm () {
             <span className='flex items-center gap-x-1'>
             <input
                 type='radio'
-                value={true}
-                defaultChecked={true}
+                checked = {formState.nhif_accreditation !== null ? Boolean(formState.nhif_accreditation) : false}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: true})
+                }}
                 name='nhif_accreditation'
                 id='nhif_accreditation_yes'
             
@@ -643,8 +751,10 @@ export function BasicDetailsForm () {
             <span className='flex items-center gap-x-1'>
             <input
                 type='radio'
-                value={false}
-                defaultChecked={false}
+                checked={formState.nhif_accreditation !== null ? !Boolean(formState.nhif_accreditation) : false}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: false})
+                }}
                 name='nhif_accreditation'
                 id='nhif_accreditation_no'
             
@@ -662,7 +772,10 @@ export function BasicDetailsForm () {
             <div className='w-full flex flex-row items-center px-2 justify-  gap-1 gap-x-3 mb-3'>
             <input
                 type='checkbox'
-                defaultValue={true}
+                checked={formState.is_classified}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: e.target.checked})
+                }} 
                 name='is_classified'
                 id='is_armed_forces'
 
@@ -688,9 +801,10 @@ export function BasicDetailsForm () {
         
                 name='open_whole_day'
                 id='open_24hrs'
-                defaultValue={true}
-                onChange={() => null}
-                
+                checked={formState.open_whole_day}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: e.target.checked})
+                }}
                 
             />
             <label
@@ -707,7 +821,10 @@ export function BasicDetailsForm () {
             
                 name='open_late_night'
                 id='open_late_night'
-                defaultValue={true}
+                checked={formState.open_late_night}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: e.target.checked})
+                }}
                 
                 
             />
@@ -725,7 +842,10 @@ export function BasicDetailsForm () {
                 
                 name='open_public_holidays'
                 id='open_public_holidays'
-                defaultValue={true}
+                checked={formState.open_public_holidays}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: e.target.checked})
+                }}
                 
                 
             />
@@ -743,7 +863,10 @@ export function BasicDetailsForm () {
 
                 name='open_weekends'
                 id='open_weekends'
-                defaultValue={true}
+                checked={formState.open_weekends}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: e.target.checked})
+                }}
             
             />
             <label
@@ -760,7 +883,10 @@ export function BasicDetailsForm () {
                 
                 name='open_normal_day'
                 id='open_8_5'
-                defaultValue={true}
+                checked={formState.open_normal_day}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: e.target.checked})
+                }}
                 
             />
             <label
@@ -794,7 +920,10 @@ export function BasicDetailsForm () {
                     options={[{value: 1, label:"Kericho"}, {value: 2, label:"Nairobi"}, {value: 3, label:"Machakos"}]}
                     required
                     placeholder='Select County'
-                    onChange={(ev) => null}
+                    onChange={({label, value}) => {
+                        dispatch({type:'county_id', value:{label, value}})
+                    }}
+                    
                     name='county_id'
                     className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
                 />
@@ -817,6 +946,9 @@ export function BasicDetailsForm () {
                     options={[{value: 1, label:"Chepalungu"}, {value: 2, label:"Moiben"}, {value: 3, label:"Kapasaret"}]}
                     required
                     placeholder='Select Sub County'
+                    onChange={({label, value}) => {
+                        dispatch({type:'sub_county_id', value:{label, value}})
+                    }}
                     name='sub_county_id'
                     
                     className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
@@ -840,7 +972,9 @@ export function BasicDetailsForm () {
                     options={[{value: 1, label:"Chepalungu"}, {value: 2, label:"Moiben"}, {value: 3, label:"Kapasaret"}]}
                     required
                     placeholder='Select Constituency'
-                    onChange={e => null}
+                    onChange={({label, value}) => {
+                        dispatch({type:'constituency_id', value:{label, value}})
+                    }}
                     name='constituency_id'
                     className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
                 />
@@ -863,7 +997,9 @@ export function BasicDetailsForm () {
                     options={[{value: 1, label:"Chepalungu"}, {value: 2, label:"Moiben"}, {value: 3, label:"Kapasaret"}]}
                     required
                     placeholder='Select Ward'
-
+                    onChange={({label, value}) => {
+                        dispatch({type:'constituency_id', value:{label, value}})
+                    }}
                     name='ward'
                     className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
                 />
@@ -883,8 +1019,12 @@ export function BasicDetailsForm () {
                 </span>
             </label>
             <input
-                
                 type='text'
+                onChange={(e) => {
+                    
+                    dispatch({type:e.target.name, value: e.target.value})
+                }}
+                value={formState.town_name}
                 name='town_name'
                 className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
@@ -894,6 +1034,7 @@ export function BasicDetailsForm () {
             <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
             <label
                 htmlFor='plot_number'
+                
                 className='text-gray-600 capitalize text-sm'>
                 Plot number
                 <span className='text-medium leading-12 font-semibold'>
@@ -904,6 +1045,11 @@ export function BasicDetailsForm () {
             <input
                 
                 type='text'
+                onChange={(e) => {
+                    
+                    dispatch({type:e.target.name, value: e.target.value})
+                }}
+                value={formState.plot_number}
                 name='plot_number'
                 className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
@@ -924,6 +1070,10 @@ export function BasicDetailsForm () {
                 
                 type='text'
                 name='nearest_landmark'
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: e.target.value})
+                }}
+                value={formState.nearest_landmark}
                 className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />
             </div>
@@ -942,6 +1092,10 @@ export function BasicDetailsForm () {
             <input
                 
                 type='text'
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: e.target.value})
+                }}
+                value={formState.location_desc}
                 name='location_desc'
                 className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
             />

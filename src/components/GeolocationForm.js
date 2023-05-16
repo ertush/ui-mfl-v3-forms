@@ -15,7 +15,9 @@ const initialFormValues = {
     collection_date: '',
     longitude: '',
     latitude: '',
-    facility_type: ''
+    facility_type: '',
+    accredited_lab_iso_15189: null,
+    is_classified: null
 }
    
 const formReducer = (state, action) => {
@@ -40,6 +42,10 @@ useEffect(() => {
         dispatch({type:'collection_date', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.collection_date })
         dispatch({type:'longitude', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.longitude})
         dispatch({type:'latitude', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.latitude})
+        dispatch({type:'accredited_lab_iso_15189', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.accredited_lab_iso_15189})
+        dispatch({type:'is_classified', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.is_classified})
+
+        
        
     }
 
@@ -56,7 +62,9 @@ if( window &&
     formState.collection_date !== '' &&
     formState.longitude !== '' &&
     formState.latitude !== '' &&
-    formState.facility_type !== ''
+    formState.facility_type !== '' &&
+    formState.accredited_lab_iso_15189 !== null &&
+    formState.is_classified !== null
     ){
 
     // console.log({formState})
@@ -65,14 +73,16 @@ if( window &&
         collection_date: formState.collection_date,
         longitude: formState.longitude,
         latitude: formState.latitude,
-        facility_type: formState.facility_type
+        facility_type: formState.facility_type,
+        accredited_lab_iso_15189: formState.accredited_lab_iso_15189,
+        is_classified: formState.is_classified
     }))
 
     // console.log({label: formState.facility_type.label, value:formState.facility_type.value})
 
 }
 
-}, [formState.collection_date, formState.longitude, formState.latitude, formState.facility_type])
+}, [formState.collection_date, formState.longitude, formState.latitude, formState.facility_type, formState.accredited_lab_iso_15189, formState.is_classified])
 
 const handlePrevious = () => {
     setFormId(prev => (prev - 1))
@@ -182,14 +192,70 @@ return (
             required
             placeholder='Select a facility type...'
             onChange={({label, value}) => {
-
-              
                 dispatch({type:'facility_type', value:{label, value}})
             }}
             
             name='facility_type'
             className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
             />
+        </div>
+
+        <div className='w-full flex flex-row items-center px-2 justify-  gap-1 gap-x-3 mb-3'>
+            <label
+            htmlFor='accredited_lab_iso_15189'
+            className='text-gray-700 capitalize text-sm flex-grow'>
+            *Is the facility accredited Lab ISO 15189?{' '}
+            </label>
+            <span className='flex items-center gap-x-1'>
+            <input
+                type='radio'
+                
+                name='accredited_lab_iso_15189'
+                id='open_whole_day_yes'
+                checked = {formState.accredited_lab_iso_15189 !== null ? Boolean(formState.accredited_lab_iso_15189) : false}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: true})
+                }}
+            />
+            <small className='text-gray-700'>Yes</small>
+            </span>
+            <span className='flex items-center gap-x-1'>
+            <input
+                type='radio'
+               
+                name='accredited_lab_iso_15189'
+                id='open_whole_day_no'
+                checked={formState.accredited_lab_iso_15189 !== null ? !Boolean(formState.accredited_lab_iso_15189) : false}
+                onChange={(e) => {
+                    dispatch({type:e.target.name, value: false})
+                }}  
+            />
+            <small className='text-gray-700'>No</small>
+            </span>
+        </div>
+        <div className=' w-full flex flex-col items-start justify-start p-3 rounded border border-gray-300/70 bg-gray-50 h-auto'>
+            <h4 className='text-lg uppercase pb-2 border-b border-gray-100 w-full mb-4 font-semibold text-blue-900'>
+            Armed Forces Facilities
+            </h4>
+            <div className='w-full flex flex-row items-center px-2 justify-  gap-1 gap-x-3 mb-3'>
+            <input
+                type='checkbox'
+                checked={formState.is_classified}
+                onChange={(e) => {
+                    // console.log({name: e.target.name, value: e.target.checked,})
+                    dispatch({type:e.target.name, value: e.target.checked})
+                }} 
+                name='is_classified'
+                id='is_armed_forces'
+
+            />
+            <label
+                htmlFor='is_classified'
+                className='text-gray-700 capitalize text-sm flex-grow'>
+                {' '}
+                Is this an Armed Force facility?{' '}
+            </label>
+            </div>
         </div>
     <>{!1 && <Alert severity="error" sx={{width:'100%'}}> Please enter the right coordinates</Alert>}</>
     </div>
