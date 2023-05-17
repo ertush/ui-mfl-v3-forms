@@ -38,7 +38,7 @@ const [formState, dispatch] = useReducer(formReducer, initialFormValues)
 
 useEffect(() => {
    
-    if(window){
+    if(window && window.localStorage.getItem('geoLocationForm') !== null){
         dispatch({type:'collection_date', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.collection_date })
         dispatch({type:'longitude', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.longitude})
         dispatch({type:'latitude', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.latitude})
@@ -191,8 +191,8 @@ return (
             options={[{value: 1, label:"MOH"}, {value: 2, label:"Private"}, {value: 3, label:"NGO"}]}
             required
             placeholder='Select a facility type...'
-            onChange={({label, value}) => {
-                dispatch({type:'facility_type', value:{label, value}})
+            onChange={(option) => {
+                dispatch({type:'facility_type', value:{label: option?.label, value: option?.value}})
             }}
             
             name='facility_type'
@@ -242,7 +242,6 @@ return (
                 type='checkbox'
                 checked={formState.is_classified}
                 onChange={(e) => {
-                    // console.log({name: e.target.name, value: e.target.checked,})
                     dispatch({type:e.target.name, value: e.target.checked})
                 }} 
                 name='is_classified'
