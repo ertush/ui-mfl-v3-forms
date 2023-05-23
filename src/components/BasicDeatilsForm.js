@@ -6,37 +6,72 @@ import {
 
 import Select from 'react-select';
 
+// import Alert from '@mui/material/Alert';
+
 import { FormContext } from './Forms';
 
 import { useReducer, useContext, useEffect, useRef } from 'react'
 
+import { FormOptionsContext } from '@/pages';
+
+// import { useQuery } from '@tanstack/react-query'
+
+// import axios from 'axios';
+
+
+
 
 export function BasicDetailsForm() {
 
+
+     const options = useContext(FormOptionsContext)
+
     // Form Context
+
+
+    console.log({options})
+
     const setFormId = useContext(FormContext);
+
+
+
+    // const { data: facilityTypes } = useFormData('/facilities/facility_types/?is_active=true&page_size=10000')
+
+    // const { data: owners} = useFormData('/facilities/owners/?is_active=true&page_size=10000')
+
+    // const { data: ownerTypes} = useFormData('/facilities/owner_types/?is_active=true&page_size=10000')
+
+    // const { data: keph} = useFormData('/facilities/keph/?is_active=true&page_size=10000')
+
+    // const { data: facility_admission_status} = useFormData('/facilities/facility_admission_status/?is_active=true&page_size=10000')
+
+    // const {data: job_titles} = useFormData('/facilities/job_titles/?fields=id,name')
+    
+    // console.log({ ownerTypes })
 
     const initialFormState = {
         official_name: "",
         name: "",
         facility_type: "",
+        facility_type_options: null,
         facility_type_details: "",
         operation_status: "",
         date_established: "",
         accredited_lab_iso_15189: null,
         owner_type: "",
+        owner_type_options: "",
         owner: "",
         keph_level: "",
-        number_of_beds: null,
-        number_of_inpatient_beds: null,
-        number_of_cots: null,
-        number_of_emergency_casualty_beds: null,
-        number_of_icu_beds: null,
-        number_of_hdu_beds: null,
-        number_of_maternity_beds: null,
-        number_of_isolation_beds: null,
-        number_of_general_theatres: null,
-        number_of_maternity_theatres: null,
+        number_of_beds: "",
+        number_of_inpatient_beds: "",
+        number_of_cots: "",
+        number_of_emergency_casualty_beds: "",
+        number_of_icu_beds: "",
+        number_of_hdu_beds: "",
+        number_of_maternity_beds: "",
+        number_of_isolation_beds: "",
+        number_of_general_theatres: "",
+        number_of_maternity_theatres: "",
         facility_catchment_population: null,
         reporting_in_dhis: null,
         admission_status: "",
@@ -91,14 +126,17 @@ export function BasicDetailsForm() {
     // Side Effects
 
     useEffect(() => {
+
         if (window && window.localStorage.getItem('basicDetailsForm') !== null) {
             Object.keys(initialFormState).forEach((field) => {
-                dispatch({ type: `${field}`, value: JSON.parse(window.localStorage.getItem('basicDetailsForm'))[`${field}`] })
-            })
-        }
+               
+                  dispatch({ type: `${field}`, value: JSON.parse(window.localStorage.getItem('basicDetailsForm'))[`${field}`] })
 
+            })
+        
         if (facilityTypeRef.current !== null) {
             facilityTypeRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.facility_type, 'set-value')
+        
         }
 
 
@@ -141,6 +179,82 @@ export function BasicDetailsForm() {
         if (wardRef.current !== null) {
             wardRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.ward, 'set-value')
         }
+    }
+
+    // Initialize Select Options
+
+    }, [])
+
+
+    useEffect(() => {
+
+        
+        // Populate Select Options
+
+        if(options['0']?.facility_types){
+            const facilityTypeOptions = (() => {
+                const f_types = [
+                    'STAND ALONE',
+                    'DISPENSARY',
+                    'MEDICAL CLINIC',
+                    'NURSING HOME',
+                    'HOSPITALS',
+                    'HEALTH CENTRE',
+                    'MEDICAL CENTRE'
+                ]
+        
+                const all_ftypes = []
+        
+        
+                for (let type in f_types) all_ftypes.push(options['0']?.facility_types.filter(({ sub_division }) => sub_division === f_types[type]))
+        
+                return [{
+                    label: all_ftypes[0].sub_division,
+                    value: all_ftypes[0].parent
+                },
+                {
+                    label: all_ftypes[1].sub_division,
+                    value: all_ftypes[1].parent
+                },
+                {
+                    label: all_ftypes[2].sub_division,
+                    value: all_ftypes[2].parent
+                },
+                {
+                    label: all_ftypes[3].sub_division,
+                    value: all_ftypes[3].parent
+                },
+                {
+                    label: all_ftypes[4].sub_division,
+                    value: all_ftypes[4].parent
+                },
+                {
+                    label: all_ftypes[5].sub_division,
+                    value: all_ftypes[5].parent
+                }
+        
+                ]
+        
+            })()
+
+            // console.log({facilityTypeOptions})
+
+            dispatch({type:'facility_type_options', value: facilityTypeOptions})
+            
+           
+        }
+
+        // For owners
+
+        // if(options['3']?.owner_types){
+
+        //     dispatch({type:'owner_type_options', value: options['3']?.owner_types.map(({label, value}) => ({
+        //         label,
+        //         value
+        //     }))})
+
+        // }
+
     }, [])
 
 
@@ -154,8 +268,8 @@ export function BasicDetailsForm() {
 
             if (
                 window &&
-                formState[`${field}`] !== '' &&
-                formState[`${field}`] !== null 
+                formState[`${field}`] !== "" &&
+                formState[`${field}`] !== null
             ) {
                 window.localStorage.setItem('basicDetailsForm', JSON.stringify(storeFields))
             }
@@ -176,9 +290,21 @@ export function BasicDetailsForm() {
         setFormId(prev => (prev - 1))
     }
 
-    // Render
+      // Render
+
+    // if(isLoading) return <Alert severity="info" sx={{width:'100%'}}> Loading ...</Alert>
+
+    // if(tokenError) return <Alert severity="error" sx={{width:'100%'}}> Unable to fetch token</Alert>
+
+    // if(error) return <Alert severity="error" sx={{width:'100%'}}> Unable to fetch Form Data</Alert>
+    // 
+  
     return (
         <>
+
+        {
+            // console.log({options: formState.owner_type_options})
+        }
             <h4 className='text-lg uppercase pb-2 border-b border-gray-100 w-full mb-4 font-semibold text-blue-900'>
                 Facility Basic Details
             </h4>
@@ -242,7 +368,7 @@ export function BasicDetailsForm() {
 
                     <Select
                         ref={facilityTypeRef}
-                        options={[{ value: 1, label: "MOH" }, { value: 2, label: "Private" }, { value: 3, label: "NGO" }]}
+                        options={formState.facility_type_options ?? options['0']?.facility_types}
                         required
                         placeholder='Select a facility type...'
                         onChange={(option) => {
@@ -266,7 +392,7 @@ export function BasicDetailsForm() {
                     </label>
                     <Select
                         ref={facilityTypeDetailsRef}
-                        options={[{ value: 1, label: "gov" }, { value: 2, label: "phamarcy" }, { value: 3, label: "clinic" }]}
+                        options={options['1']?.facility_type_details}
                         required
                         placeholder='Select a facility type details...'
                         onChange={(option) => {
@@ -378,7 +504,7 @@ export function BasicDetailsForm() {
                     </label>
                     <Select
                         ref={ownerCategoryRef}
-                        options={[{ value: 1, label: "FBO" }, { value: 2, label: "HDU" }, { value: 3, label: "XBO" }]}
+                        options={options['3']?.owner_types} //formState.owner_type_options
                         required
                         placeholder='Select owner..'
                         name='owner_type'
@@ -402,7 +528,56 @@ export function BasicDetailsForm() {
                     </label>
                     <Select
                         ref={ownerDetailsRef}
-                        options={[{ value: 1, label: "JKO" }, { value: 2, label: "CLB" }, { value: 3, label: "TYO" }]}
+                        options={(() => {
+							// console.log({owner_type: formState.owner_type})							
+                            switch(formState.owner_type?.label){
+                                case "Private Practice":
+
+
+                                    return [
+                                        options['2']?.owners.filter(({label}) => label == "Private Practice- Pharmacist")[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == "Private Practice - Private Company")[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == "Private Practice Lab Technician/Technologist")[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == "Private Practice - Nurse / Midwifery")[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == "Private Practice - Medical Specialist")[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == "Private Practice - General Practitioner")[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == "Private Practice - Clinical Officer")[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == "Private Practice - Private Institution Academic")[0] || {}
+                                    
+                                         ] 
+                                    
+                                case 'Non-Governmental Organizations':
+                                    return  options['2']?.owners.filter(({label}) => label == 'Non-Governmental Organizations') || []
+                                    
+
+                                case 'Ministry of Health':
+                    
+                                    return [
+                                        options['2']?.owners.filter(({label}) => label == "Public Institution - Parastatal")[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == 'Ministry of Health')[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == 'Armed Forces')[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == 'Kenya Police Service')[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == 'National Youth Service')[0] || {},
+                                        options['2']?.owners.filter(({label}) => label == 'Prisons')[0] || {}
+
+                                    ]																				
+                                    
+                                case 'Faith Based Organization':																		
+
+                                    return [
+                                                options['2']?.owners.filter(({label}) => label == 'Seventh Day Adventist')[0] || {},
+                                                options['2']?.owners.filter(({label}) => label == 'Supreme Council for Kenya Muslims')[0] || {},
+                                                options['2']?.owners.filter(({label}) => label == 'Other Faith Based')[0] || {},
+                                                options['2']?.owners.filter(({label}) => label == 'Seventh Day Adventist')[0] || {},
+                                                options['2']?.owners.filter(({label}) => label == 'Kenya Episcopal Conference-Catholic Secretariat')[0] || {},
+                                                options['2']?.owners.filter(({label}) => label == 'Christian Health Association of Kenya')[0] || {},
+                                            ]
+
+                                            
+
+                                
+                            }
+                        })() ?? []}
                         required
                         placeholder='Select an owner..'
                         onChange={(option) => {
@@ -422,7 +597,7 @@ export function BasicDetailsForm() {
                     </label>
                     <Select
                         ref={kephLevelRef}
-                        options={[{ value: 1, label: "DLP" }, { value: 2, label: "XRT" }, { value: 3, label: "NGO" }]}
+                        options={options['4']?.keph}
                         isOptionDisabled={(option) => true}
                         onChange={(option) => {
                             dispatch({ type: 'owner', value: { label: option?.label, value: option?.value } })
@@ -772,7 +947,7 @@ export function BasicDetailsForm() {
                     </label>
                     <Select
                         ref={facilityAdmissionsRef}
-                        options={[{ value: 1, label: "Not admitting" }, { value: 2, label: "Admission" }, { value: 3, label: "None" }]}
+                        options={options['5']?.facility_admission_status}
                         required
                         placeholder='Select an admission status..'
                         onChange={(option) => {
@@ -974,7 +1149,7 @@ export function BasicDetailsForm() {
                                 </label>
                                 <Select
                                     ref={countyRef}
-                                    options={[{ value: 1, label: "Kericho" }, { value: 2, label: "Nairobi" }, { value: 3, label: "Machakos" }]}
+                                    options={options['6']?.counties}
                                     required
                                     placeholder='Select County'
                                     onChange={(option) => {
@@ -1001,7 +1176,7 @@ export function BasicDetailsForm() {
                                 </label>
                                 <Select
                                     ref={subCountyRef}
-                                    options={[{ value: 1, label: "Chepalungu" }, { value: 2, label: "Moiben" }, { value: 3, label: "Kapasaret" }]}
+                                    options={options['7']?.sub_counties}
                                     required
                                     placeholder='Select Sub County'
                                     onChange={(option) => {
@@ -1028,7 +1203,7 @@ export function BasicDetailsForm() {
                                 </label>
                                 <Select
                                     ref={constituencyRef}
-                                    options={[{ value: 1, label: "Chepalungu" }, { value: 2, label: "Moiben" }, { value: 3, label: "Kapasaret" }]}
+                                    options={options['7']?.constituencies}
                                     required
                                     placeholder='Select Constituency'
                                     onChange={(option) => {
@@ -1054,7 +1229,7 @@ export function BasicDetailsForm() {
                                 </label>
                                 <Select
                                     ref={wardRef}
-                                    options={[{ value: 1, label: "Chepalungu" }, { value: 2, label: "Moiben" }, { value: 3, label: "Kapasaret" }]}
+                                    options={options['8']?.wards}
                                     required
                                     placeholder='Select Ward'
                                     onChange={(option) => {
@@ -1207,3 +1382,4 @@ export function BasicDetailsForm() {
         </>
     )
 }
+

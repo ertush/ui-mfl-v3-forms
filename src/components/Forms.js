@@ -1,7 +1,7 @@
 
 "use client"
 
-import {useState, createContext} from 'react';
+import {useState, createContext, useContext} from 'react';
 
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
@@ -11,12 +11,23 @@ import StepLabel from '@mui/material/StepLabel';
 import { BasicDetailsForm } from './BasicDeatilsForm';
 import { GeolocationForm } from './GeolocationForm';
 import { HumanresourcesForm } from './HumanresourcesForm';
+// import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+
+
+
 
 // import { FacilityContactsForm } from './FacilityContactsForm';
 
 export const FormContext  = createContext(() => null)
 
+// const queryClient = new QueryClient()
+
+
 export function Form () {
+
+  // const queryClient = new QueryClient()
+
 
   const [formId, setFormId] = useState(0); //1
 
@@ -66,8 +77,11 @@ export function Form () {
                         className=' w-full flex flex-col items-start justify-start p-3 rounded border border-gray-300/70 bg-gray-50'
                         style={{ minHeight: '250px' }}>
                            {
-                                formId == 0 &&              
-                                <BasicDetailsForm />
+                                formId == 0 && 
+                                // <QueryClientProvider client={queryClient}>
+
+                                  <BasicDetailsForm />
+                                // </QueryClientProvider>
                               }
                               {
                                   formId == 1 && 
