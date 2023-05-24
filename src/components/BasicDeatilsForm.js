@@ -29,7 +29,7 @@ export function BasicDetailsForm() {
     // Form Context
 
 
-    console.log({options})
+    // console.log({options})
 
     const setFormId = useContext(FormContext);
 
@@ -123,61 +123,133 @@ export function BasicDetailsForm() {
 
     const [formState, dispatch] = useReducer(formReducer, initialFormState)
 
+    const facilityTypeOptions = (() => {
+        const f_types = [
+            'STAND ALONE',
+            'DISPENSARY',
+            'MEDICAL CLINIC',
+            'NURSING HOME',
+            'HOSPITALS',
+            'HEALTH CENTRE',
+            'MEDICAL CENTER'
+        ]
+
+        const all_ftypes = []
+
+        for (let type in f_types) all_ftypes.push(options['0']?.facility_types.filter(({ sub_division }) => sub_division === f_types[type]))
+
+        return all_ftypes.map(arr => ({
+            label: arr[0]?.sub_division,
+            value: arr[0]?.parent
+        }));
+
+    })()
+
+    const facilityTypeDetailOptions = (() => {
+        const f_types = [
+            'STAND ALONE',
+            'DISPENSARY',
+            'MEDICAL CLINIC',
+            'NURSING HOME',
+            'HOSPITALS',
+            'HEALTH CENTRE',
+            'MEDICAL CENTER'
+        ]
+
+        const all_ftypes = []
+
+        for (let type in f_types) all_ftypes.push(options['0']?.facility_types.filter(({ sub_division }) => sub_division === f_types[type]))
+
+        // console.log({all_ftypes});
+
+        switch(formState.facility_type?.value){
+                // STAND ALONE 
+                case '85f2099b-a2f8-49f4-9798-0cb48c0875ff':
+                    return all_ftypes[0].map(({id:value, name:label}) => ({label, value}))
+                // DISPENSARY
+                case '87626d3d-fd19-49d9-98da-daca4afe85bf':
+                    return all_ftypes[1].map(({id:value, name:label}) => ({label, value}))
+                // MEDICAL CLINIC
+                case '8949eeb0-40b1-43d4-a38d-5d4933dc209f':
+                    return all_ftypes[2].map(({id:value, name:label}) => ({label, value}))
+                // NURSING HOME
+                case '0b7f9699-6024-4813-8801-38f188c834f5':
+                    return all_ftypes[3].map(({id:value, name:label}) => ({label, value}))
+                // HOSPITALS
+                case '1f1e3389-f13f-44b5-a48e-c1d2b822e5b5':
+                    return all_ftypes[4].map(({id:value, name:label}) => ({label, value}))
+                // HEALTH CENTER
+                case '9ad22615-48f2-47b3-8241-4355bb7db835':
+                    return all_ftypes[5].map(({id:value, name:label}) => ({label, value}))
+                // MEDICAL CENTER
+                case 'df69577d-b90f-4b66-920a-d0f3ecd95191':
+                    return all_ftypes[5].map(({id:value, name:label}) => ({label, value}))
+                default:
+                    return  all_ftypes.map(arr => ({
+                        label: arr[0]?.sub_division,
+                        value: arr[0]?.parent
+                    }));
+
+        }
+
+    })()
+
     // Side Effects
+
 
     useEffect(() => {
 
-        if (window && window.localStorage.getItem('basicDetailsForm') !== null) {
+        if (window && window.sessionStorage.getItem('basicDetailsForm') !== null) {
             Object.keys(initialFormState).forEach((field) => {
                
-                  dispatch({ type: `${field}`, value: JSON.parse(window.localStorage.getItem('basicDetailsForm'))[`${field}`] })
+                  dispatch({ type: `${field}`, value: JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))[`${field}`] })
 
             })
         
         if (facilityTypeRef.current !== null) {
-            facilityTypeRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.facility_type, 'set-value')
+            facilityTypeRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type, 'set-value')
         
         }
 
 
         if (facilityTypeDetailsRef.current !== null) {
-            facilityTypeDetailsRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.facility_type_details, 'set-value')
+            facilityTypeDetailsRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type_details, 'set-value')
         }
 
         if (operationStatusRef.current !== null) {
-            operationStatusRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.operation_status, 'set-value')
+            operationStatusRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.operation_status, 'set-value')
         }
 
         if (ownerCategoryRef.current !== null) {
-            ownerCategoryRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.owner_type, 'set-value')
+            ownerCategoryRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.owner_type, 'set-value')
         }
 
         if (ownerDetailsRef.current !== null) {
-            ownerDetailsRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.owner, 'set-value')
+            ownerDetailsRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.owner, 'set-value')
         }
 
         if (kephLevelRef.current !== null) {
-            kephLevelRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.keph_level, 'set-value')
+            kephLevelRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.keph_level, 'set-value')
         }
 
         if (facilityAdmissionsRef.current !== null) {
-            facilityAdmissionsRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.admission_status, 'set-value')
+            facilityAdmissionsRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.admission_status, 'set-value')
         }
 
         if (countyRef.current !== null) {
-            countyRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.county_id, 'set-value')
+            countyRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.county_id, 'set-value')
         }
 
         if (subCountyRef.current !== null) {
-            subCountyRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.sub_county_id, 'set-value')
+            subCountyRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.sub_county_id, 'set-value')
         }
 
         if (constituencyRef.current !== null) {
-            constituencyRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.constituency_id, 'set-value')
+            constituencyRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.constituency_id, 'set-value')
         }
 
         if (wardRef.current !== null) {
-            wardRef.current.setValue(JSON.parse(window.localStorage.getItem('basicDetailsForm'))?.ward, 'set-value')
+            wardRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.ward, 'set-value')
         }
     }
 
@@ -186,76 +258,33 @@ export function BasicDetailsForm() {
     }, [])
 
 
-    useEffect(() => {
+    // useEffect(() => {
 
         
-        // Populate Select Options
+    //     // Populate Select Options
 
-        if(options['0']?.facility_types){
-            const facilityTypeOptions = (() => {
-                const f_types = [
-                    'STAND ALONE',
-                    'DISPENSARY',
-                    'MEDICAL CLINIC',
-                    'NURSING HOME',
-                    'HOSPITALS',
-                    'HEALTH CENTRE',
-                    'MEDICAL CENTRE'
-                ]
-        
-                const all_ftypes = []
-        
-        
-                for (let type in f_types) all_ftypes.push(options['0']?.facility_types.filter(({ sub_division }) => sub_division === f_types[type]))
-        
-                return [{
-                    label: all_ftypes[0].sub_division,
-                    value: all_ftypes[0].parent
-                },
-                {
-                    label: all_ftypes[1].sub_division,
-                    value: all_ftypes[1].parent
-                },
-                {
-                    label: all_ftypes[2].sub_division,
-                    value: all_ftypes[2].parent
-                },
-                {
-                    label: all_ftypes[3].sub_division,
-                    value: all_ftypes[3].parent
-                },
-                {
-                    label: all_ftypes[4].sub_division,
-                    value: all_ftypes[4].parent
-                },
-                {
-                    label: all_ftypes[5].sub_division,
-                    value: all_ftypes[5].parent
-                }
-        
-                ]
-        
-            })()
+    //     // if(options['0']?.facility_types){
+           
 
-            // console.log({facilityTypeOptions})
+    //     //     // console.log({facilityTypeOptions})
 
-            dispatch({type:'facility_type_options', value: facilityTypeOptions})
+    //     //     dispatch({type:'facility_type_options', value: facilityTypeOptions})
             
            
-        }
+    //     // }
 
-        // For owners
+    //     // For owners
 
-        // if(options['3']?.owner_types){
+    //     // if(options['3']?.owner_types){
 
-        //     dispatch({type:'owner_type_options', value: options['3']?.owner_types.map(({label, value}) => ({
-        //         label,
-        //         value
-        //     }))})
+    //     //     dispatch({type:'owner_type_options', value: options['3']?.owner_types.map(({label, value}) => ({
+    //     //         label,
+    //     //         value
+    //     //     }))})
 
-        // }
+    //     // }
 
-    }, [])
+    // }, [])
 
 
     useEffect(() => {
@@ -271,7 +300,7 @@ export function BasicDetailsForm() {
                 formState[`${field}`] !== "" &&
                 formState[`${field}`] !== null
             ) {
-                window.localStorage.setItem('basicDetailsForm', JSON.stringify(storeFields))
+                window.sessionStorage.setItem('basicDetailsForm', JSON.stringify(storeFields))
             }
         })
 
@@ -303,7 +332,7 @@ export function BasicDetailsForm() {
         <>
 
         {
-            // console.log({options: formState.owner_type_options})
+            // console.log({facilityTypeOptions})
         }
             <h4 className='text-lg uppercase pb-2 border-b border-gray-100 w-full mb-4 font-semibold text-blue-900'>
                 Facility Basic Details
@@ -368,10 +397,42 @@ export function BasicDetailsForm() {
 
                     <Select
                         ref={facilityTypeRef}
-                        options={formState.facility_type_options ?? options['0']?.facility_types}
+                        options={facilityTypeOptions}
                         required
                         placeholder='Select a facility type...'
                         onChange={(option) => {
+                            
+
+                    switch(option?.value){
+                        // STAND ALONE 
+                        case '85f2099b-a2f8-49f4-9798-0cb48c0875ff':
+                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 2'))
+                            break;
+                        // DISPENSARY
+                        case '87626d3d-fd19-49d9-98da-daca4afe85bf':
+                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 2'))
+                            break;
+
+                        // MEDICAL CLINIC
+                        case '8949eeb0-40b1-43d4-a38d-5d4933dc209f':
+                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 2'))
+                            break;
+
+                        // NURSING HOME
+                        case '0b7f9699-6024-4813-8801-38f188c834f5':
+                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 2'))
+                            break;
+
+                        // HEALTH CENTER
+                        case '9ad22615-48f2-47b3-8241-4355bb7db835':
+                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 3'))
+                            break;
+
+                        // MEDICAL CENTER
+                        case 'df69577d-b90f-4b66-920a-d0f3ecd95191':
+                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 3'))
+                            break;
+                }
                             dispatch({ type: 'facility_type', value: { label: option?.label, value: option?.value } })
                         }}
                         name='facility_type'
@@ -392,7 +453,7 @@ export function BasicDetailsForm() {
                     </label>
                     <Select
                         ref={facilityTypeDetailsRef}
-                        options={options['1']?.facility_type_details}
+                        options={facilityTypeDetailOptions}
                         required
                         placeholder='Select a facility type details...'
                         onChange={(option) => {
@@ -568,7 +629,6 @@ export function BasicDetailsForm() {
                                                 options['2']?.owners.filter(({label}) => label == 'Seventh Day Adventist')[0] || {},
                                                 options['2']?.owners.filter(({label}) => label == 'Supreme Council for Kenya Muslims')[0] || {},
                                                 options['2']?.owners.filter(({label}) => label == 'Other Faith Based')[0] || {},
-                                                options['2']?.owners.filter(({label}) => label == 'Seventh Day Adventist')[0] || {},
                                                 options['2']?.owners.filter(({label}) => label == 'Kenya Episcopal Conference-Catholic Secretariat')[0] || {},
                                                 options['2']?.owners.filter(({label}) => label == 'Christian Health Association of Kenya')[0] || {},
                                             ]
