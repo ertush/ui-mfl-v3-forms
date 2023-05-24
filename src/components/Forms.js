@@ -10,7 +10,7 @@ import StepLabel from '@mui/material/StepLabel';
 
 import { BasicDetailsForm } from './BasicDeatilsForm';
 import { GeolocationForm } from './GeolocationForm';
-import { HumanresourcesForm } from './HumanresourcesForm';
+import { FacilityContactsForm } from './FacilityContactsForm';
 // import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 
@@ -20,6 +20,8 @@ import { HumanresourcesForm } from './HumanresourcesForm';
 // import { FacilityContactsForm } from './FacilityContactsForm';
 
 export const FormContext  = createContext(() => null)
+export const FacilityDeptContext = createContext(null)
+export const FacilityContactsContext = createContext(null)
 
 // const queryClient = new QueryClient()
 
@@ -89,7 +91,7 @@ export function Form () {
                               } 
                               {
                                   formId == 2 &&    
-                                  <HumanresourcesForm />
+                                  <FacilityContactsForm />
                                 
                               } 
                              

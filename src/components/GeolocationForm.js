@@ -38,19 +38,19 @@ const [formState, dispatch] = useReducer(formReducer, initialFormValues)
 
 useEffect(() => {
    
-    if(window && window.localStorage.getItem('geoLocationForm') !== null){
-        dispatch({type:'collection_date', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.collection_date })
-        dispatch({type:'longitude', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.longitude})
-        dispatch({type:'latitude', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.latitude})
-        dispatch({type:'accredited_lab_iso_15189', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.accredited_lab_iso_15189})
-        dispatch({type:'is_classified', value:JSON.parse(window.localStorage.getItem('geoLocationForm'))?.is_classified})
+    if(window && window.sessionStorage.getItem('geoLocationForm') !== null){
+        dispatch({type:'collection_date', value:JSON.parse(window.sessionStorage.getItem('geoLocationForm'))?.collection_date })
+        dispatch({type:'longitude', value:JSON.parse(window.sessionStorage.getItem('geoLocationForm'))?.longitude})
+        dispatch({type:'latitude', value:JSON.parse(window.sessionStorage.getItem('geoLocationForm'))?.latitude})
+        dispatch({type:'accredited_lab_iso_15189', value:JSON.parse(window.sessionStorage.getItem('geoLocationForm'))?.accredited_lab_iso_15189})
+        dispatch({type:'is_classified', value:JSON.parse(window.sessionStorage.getItem('geoLocationForm'))?.is_classified})
 
         
        
     }
 
     if(facilityTypeRef.current !== null) {
-        facilityTypeRef.current.setValue(JSON.parse(window.localStorage.getItem('geoLocationForm'))?.facility_type, 'set-value')
+        facilityTypeRef.current.setValue(JSON.parse(window.sessionStorage.getItem('geoLocationForm'))?.facility_type, 'set-value')
     }
 
 
@@ -69,7 +69,7 @@ if( window &&
 
     // console.log({formState})
 
-    window.localStorage.setItem('geoLocationForm', JSON.stringify({
+    window.sessionStorage.setItem('geoLocationForm', JSON.stringify({
         collection_date: formState.collection_date,
         longitude: formState.longitude,
         latitude: formState.latitude,

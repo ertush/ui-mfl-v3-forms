@@ -20,7 +20,6 @@ import { FormOptionsContext } from '@/pages';
 
 
 
-
 export function BasicDetailsForm() {
 
 
@@ -332,7 +331,8 @@ export function BasicDetailsForm() {
         <>
 
         {
-            // console.log({facilityTypeOptions})
+            console.log({constituencies: options['8']?.constituencies})
+            
         }
             <h4 className='text-lg uppercase pb-2 border-b border-gray-100 w-full mb-4 font-semibold text-blue-900'>
                 Facility Basic Details
@@ -660,7 +660,7 @@ export function BasicDetailsForm() {
                         options={options['4']?.keph}
                         isOptionDisabled={(option) => true}
                         onChange={(option) => {
-                            dispatch({ type: 'owner', value: { label: option?.label, value: option?.value } })
+                            dispatch({ type: 'keph_level', value: { label: option?.label, value: option?.value } })
                         }}
                         placeholder='Select a KEPH Level..'
                         name='keph_level'
@@ -1263,7 +1263,7 @@ export function BasicDetailsForm() {
                                 </label>
                                 <Select
                                     ref={constituencyRef}
-                                    options={options['7']?.constituencies}
+                                    options={options['8']?.constituencies}
                                     required
                                     placeholder='Select Constituency'
                                     onChange={(option) => {
@@ -1289,7 +1289,7 @@ export function BasicDetailsForm() {
                                 </label>
                                 <Select
                                     ref={wardRef}
-                                    options={options['8']?.wards}
+                                    options={options['9']?.wards}
                                     required
                                     placeholder='Select Ward'
                                     onChange={(option) => {
