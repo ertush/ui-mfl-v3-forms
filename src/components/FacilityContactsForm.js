@@ -16,6 +16,60 @@ import { FormOptionsContext } from '@/pages';
 import { FormContext } from './Forms';
 
 export function FacilityContactsForm() {
+  
+  const contactIndexReducer = (state, action) => {
+     switch(action.type){
+      case "facility":
+        return {
+          ...state,
+          facility: action.value
+        }
+      case "officer":
+          return {
+            ...state,
+            officer: action.value
+          }
+      default:
+        return state
+
+     }
+  }
+
+  const [contactIndex, dispatchContactIndex] = useReducer(contactIndexReducer, {
+    facility: 1,
+    officer: 1
+  })
+
+
+  // const initialFormState =  (() => ({
+  //   contact_type: "",
+  //   //   contact: "",
+  //   //   officer_details_contact_type: "",
+  //   //   officer_details_contact: "",
+  // }))()
+  
+  
+  // {
+  //   contact_type: "",
+  //   contact: "",
+  //   officer_details_contact_type: "",
+  //   officer_details_contact: "",
+  //   officer_name:"",
+  //   officer_reg_no:"",
+  //   officer_title:""
+    
+  // }
+
+  // const formReducer = (state, action) => {
+  //   if (Object.keys(initialFormState).includes(action.type)) {
+  //     return {
+  //       ...state,
+  //       [action.type]: action.value
+  //     }
+  //   } else {
+  //     return state
+  //   }
+  // }
 
   const setFormId = useContext(FormContext)
   
@@ -28,6 +82,7 @@ export function FacilityContactsForm() {
         contactTypeOptions={options['11']?.contact_types}
         fieldNames={['contact_type', 'contact']}
         setFacilityContacts={() => null}
+        setIndex={() => null}
         contacts={[null, null, null]}
         index={0}
       />
@@ -40,6 +95,7 @@ export function FacilityContactsForm() {
         contactTypeOptions={options['11']?.contact_types}
         fieldNames={['officer_details_contact_type', 'officer_details_contact']}
         contacts={[null, null, null]}
+        setIndex={() => null}
         setFacilityContacts={() => null}
         index={0}
       />
@@ -84,8 +140,9 @@ const handlePrevious = () => {
         <div className='col-span-2 flex-col w-full items-start justify-start gap-y-3 '>
           {
             facilityContacts.map((facilityContact, i) => (
-
-              facilityContact
+              <React.Fragment key={i}>
+                {facilityContact}
+              </React.Fragment>
 
             ))
           }
@@ -100,18 +157,23 @@ const handlePrevious = () => {
 
             setFacilityContacts([
               ...facilityContacts,
-              (() => (
-                <FacilityContactsContext.Provider value={facilityContacts} key={(facilityContacts.length + 1) - 1}>
+              (() => {
+                dispatchContactIndex({type:"facility", value: (contactIndex.facility + 1)})
+                return (
+                <FacilityContactsContext.Provider value={facilityContacts} key={contactIndex.facility}>
                   <FacilityContact
                     contactTypeOptions={options['11']?.contact_types}
                     setFacilityContacts={setFacilityContacts}
                     contacts={[null, null, null]}
+                    setIndex={dispatchContactIndex}
                     fieldNames={['contact_type', 'contact']}
-                    index={(facilityContacts.length + 1) - 1}
+                    count={facilityContacts.length}
+                    index={contactIndex.facility}
 
                   />
                 </FacilityContactsContext.Provider>
-              ))()
+                )
+          })()
 
 
             ])
@@ -174,7 +236,7 @@ const handlePrevious = () => {
               *
             </span>{' '}
           </label>
-          <Select options={options['12']?.job_titles}
+          <Select options={options['10']?.job_titles}
             required
             placeholder="Select Job Title"
             name="officer_title"
@@ -202,9 +264,9 @@ const handlePrevious = () => {
           <div className='col-span-2 flex-col w-full items-start justify-start gap-y-3 '>
             {
               officerContactDetails.map((officerDetailContact, i) => (
-                <React.Fragment id={i} >
+                <React.Fragment key={i}>
                  {officerDetailContact}
-                </React.Fragment>
+                 </React.Fragment>
               ))
             }
           </div>
@@ -218,18 +280,23 @@ const handlePrevious = () => {
                 e.preventDefault();
                 setOfficerContactDetails([
                   ...officerContactDetails,
-                  (() => (
+                  (() => {
+                  dispatchContactIndex({type:"officer", value:(officerContactDetails.length + 1) - 1})
+                    
+                    return(
                     <FacilityContactsContext.Provider value={officerContactDetails} key={(officerContactDetails.length + 1) - 1}>
                       <OfficerContactDetails
                         contactTypeOptions={options['11']?.contact_types}
                         setFacilityContacts={setOfficerContactDetails}
                         contacts={[null, null, null]}
+                        setIndex={dispatchContactIndex}
                         fieldNames={['officer_details_contact_type', 'officer_details_contact']}
-                        index={(officerContactDetails.length + 1) - 1}
+                        index={contactIndex.officer}
 
                       />
                     </FacilityContactsContext.Provider>
-                  ))()
+                    )
+              })()
 
                   /*(facilityDepts[facilityDepts.length - 1] + facilityDepts.length)*/
                 ])

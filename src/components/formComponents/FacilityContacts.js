@@ -3,18 +3,20 @@ import { useRef, useContext, useEffect } from "react" // useContext
 import { XCircleIcon } from '@heroicons/react/outline'
 import Select from 'react-select'
 import { FacilityContactsContext } from "../../components/Forms"
-import { EditFacilityContactsContext } from "../../components/Forms"
-import { useAlert } from "react-alert"
+
+// import { EditFacilityContactsContext } from "../../components/Forms"
+// import { useAlert } from "react-alert"
 
 
-const FacilityContact = ({contactTypeOptions, setFacilityContacts, index, fieldNames, contacts}) => {
+const FacilityContact = ({contactTypeOptions, setFacilityContacts, index, setIndex, fieldNames, contacts, count}) => {
 
 
     const contactTypes = useContext(FacilityContactsContext)
 
-    const editContacts = useContext(EditFacilityContactsContext)
 
-    const alert = useAlert()
+    // const editContacts = useContext(EditFacilityContactsContext)
+
+    // const alert = useAlert()
 
     const contactTypeRef = useRef(null)
     const contactDetailsRef = useRef(null)
@@ -76,42 +78,29 @@ const FacilityContact = ({contactTypeOptions, setFacilityContacts, index, fieldN
                     onClick={async ev => {
                         ev.preventDefault();
                       
-                        if(contacts){
-                            const _contacts = editContacts
-                            _contacts.splice(index, 1);
-                            delete _contacts[index]
-                            setFacilityContacts(_contacts);
+                    
+                        let _contacts = contactTypes;
 
-                            console.log(editContacts, _contacts)
+                        _contacts.splice(index, -1);
 
-                            try{
-                                if(contactTypeRef?.current) {
-                                const resp = await fetch(`/api/common/submit_form_data/?path=delete_contact&id=${contactTypeRef?.current?.state?.value[0].id ?? null}`)
-                                if(resp.status == 204) alert.success('Deleted Facility Contact Successfully')
+                        setIndex({type: "facility", value: (index - 1)})
 
-                               
-                                
-                                }
-                            }catch(e){
-                                console.error(e.message)
-                            }
-                        }else{
-                            contactTypes.splice(index, 1);
-                            delete contactTypes[index]
-                            setFacilityContacts(contactTypes);
-                        }
+                        setFacilityContacts(_contacts);
+                        
                      
                       
 
 
-                    }}><XCircleIcon className='w-7 h-7 text-red-400'/></button>
+                    }}>
+                        <XCircleIcon className='w-7 h-7 text-red-400'/>
+                    </button>
                 
-                </div>
+            </div>
         </div>
     )
 }
 
-const OfficerContactDetails = ({contactTypeOptions, setFacilityContacts, contacts, index, fieldNames}) => {
+const OfficerContactDetails = ({contactTypeOptions, setFacilityContacts, contacts, index, setIndex, fieldNames}) => {
 
 
     const contactTypes = useContext(FacilityContactsContext)
@@ -123,7 +112,7 @@ const OfficerContactDetails = ({contactTypeOptions, setFacilityContacts, contact
 
     useEffect(() => {
 
-        console.log({contact_type_name});
+        // console.log({contact_type_name});
         if(contactTypeRef.current && contact_type_name && id){
 
             if (contactTypeRef?.current){
@@ -174,9 +163,14 @@ const OfficerContactDetails = ({contactTypeOptions, setFacilityContacts, contact
                     id={`delete-btn-${index}`}
                     onClick={ev => {
                         ev.preventDefault();
-                        contactTypes.splice(index, 1);
-                        delete contactTypes[index]
-                        setFacilityContacts(contactTypes);
+
+                        let _contacts = contactTypes;
+
+                        _contacts.splice(index, -1);
+
+                        setIndex({type: "officer", value: (index - 1)})
+
+                        setFacilityContacts(_contacts);
                       
 
 
