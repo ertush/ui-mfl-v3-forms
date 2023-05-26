@@ -41,12 +41,13 @@ export function FacilityContactsForm() {
   })
 
 
-  // const initialFormState =  (() => ({
-  //   contact_type: "",
-  //   //   contact: "",
-  //   //   officer_details_contact_type: "",
-  //   //   officer_details_contact: "",
-  // }))()
+
+  const initialFormState =  (() => ({
+    contact_type: "",
+    //   contact: "",
+    //   officer_details_contact_type: "",
+    //   officer_details_contact: "",
+  }))()
   
   
   // {
