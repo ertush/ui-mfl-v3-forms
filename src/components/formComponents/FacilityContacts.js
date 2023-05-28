@@ -8,7 +8,7 @@ import { FacilityContactsContext } from "../../components/Forms"
 // import { useAlert } from "react-alert"
 
 
-const FacilityContact = ({contactTypeOptions, setFacilityContacts, index, setIndex, fieldNames, contacts, count}) => {
+const FacilityContact = ({contactTypeOptions, setFacilityContacts, index, setIndex, dispatch, contacts}) => {
 
 
     const contactTypes = useContext(FacilityContactsContext)
@@ -60,16 +60,18 @@ const FacilityContact = ({contactTypeOptions, setFacilityContacts, index, setInd
                         }
                     }
                 }
-                name={fieldNames[0]} 
+                name={`contact_type_${index}`} 
                 className="col-start-1  w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none" />
             
             <div className="w-full col-start-2 flex items-center gap-x-3 justify-between">
                     {/* Regulatory Body */}
                     <input ref={contactDetailsRef} id={`facility-contact-detail-${index}`} 
                     type="text" 
-                    name={fieldNames[1]} 
+                    name={`contact_${index}`} 
+                    onChange={() => {dispatch({ type: e.target.name, value: e.target.value })}}
+                    
                     className="w-full flex-grow  flex-1 bg-gray-50 rounded p-2 border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none" />
-
+                    
                     
                 
                     {/* Delete Btn */}
@@ -86,10 +88,6 @@ const FacilityContact = ({contactTypeOptions, setFacilityContacts, index, setInd
                         setIndex({type: "facility", value: (index - 1)})
 
                         setFacilityContacts(_contacts);
-                        
-                     
-                      
-
 
                     }}>
                         <XCircleIcon className='w-7 h-7 text-red-400'/>
@@ -100,7 +98,7 @@ const FacilityContact = ({contactTypeOptions, setFacilityContacts, index, setInd
     )
 }
 
-const OfficerContactDetails = ({contactTypeOptions, setFacilityContacts, contacts, index, setIndex, fieldNames}) => {
+const OfficerContactDetails = ({contactTypeOptions, setFacilityContacts, contacts, index, dispatch, setIndex}) => {
 
 
     const contactTypes = useContext(FacilityContactsContext)
@@ -145,15 +143,15 @@ const OfficerContactDetails = ({contactTypeOptions, setFacilityContacts, contact
                         }
                     }
                 }
-                name={fieldNames[0]} 
+                name={`officer_details_contact_type_${index}`} 
                 className="col-start-1  w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none" />
             
             <div className="w-full col-start-2 flex items-center gap-x-3 justify-between">
                     {/* Regulatory Body */}
                     <input ref={contactDetailsRef} id={`officer-contact-detail-${index}`} 
                     type="text" 
-                     
-                    name={fieldNames[1]} 
+                    onChange={() => {dispatch({ type: e.target.name, value: e.target.value })}}  
+                    name={`officer_details_contact_${index}`} 
                     className="w-full flex-grow  flex-1 bg-gray-50 rounded p-2 border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none" />
 
                     

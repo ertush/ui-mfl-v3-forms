@@ -50,7 +50,7 @@ const getToken = (req, res, refresh_token, creds) => {
     bod.client_id = process.env.CLIENT_ID
     bod.client_secret = process.env.CLIENT_SECRET
 
-    console.log({ token_url: process.env.TOKEN_URL })
+    // console.log({ token_url: process.env.TOKEN_URL })
     
     return fetch(process.env.TOKEN_URL, {
         'method': 'POST',
@@ -103,6 +103,8 @@ const getToken = (req, res, refresh_token, creds) => {
 }
 
 const checkToken = async (req, res, isProtected, creds) => {
+
+    console.log({username: process.env.USERNAME})
     const cookies = new Cookies(req, res)
     let crds = creds || null
     // console.log('------------checkToken: ', creds)

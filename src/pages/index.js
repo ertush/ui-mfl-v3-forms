@@ -8,7 +8,6 @@ export const FormOptionsContext = createContext({});
 export default function Home(props) {
 
 
-  console.log({props})
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
 		<div className="w-full flex flex-row justify-end py-2 mb-3">

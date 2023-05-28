@@ -35,32 +35,43 @@ export function FacilityContactsForm() {
      }
   }
 
+  
   const [contactIndex, dispatchContactIndex] = useReducer(contactIndexReducer, {
     facility: 1,
     officer: 1
   })
 
 
+  const contactFields = [...Array(contactIndex.facility).keys()].map(i => ({
+    ['contact_type_'+i]: "",
+    ['contact_'+i]: ""
+  
+  }))
 
-  const initialFormState =  (() => ({
-    contact_type: "",
-    //   contact: "",
-    //   officer_details_contact_type: "",
-    //   officer_details_contact: "",
-  }))()
+  const officerFields =  [...Array(contactIndex.officer).keys()].map(i => ({
+    ['officer_details_contact_type_'+i]: "",
+    ['officer_details_contact_'+i]: ""
+  }))
+
+
+  const initialFormState =  {
+      officer_name:"",
+      officer_reg_no:"",
+      officer_title:"" 
+  }
+
+  contactFields.forEach((obj, i) => {
+    initialFormState[Object.keys(obj)[0]] = Object.values(obj)[0]
+  })
+
+  officerFields.forEach((obj, i) => {
+    initialFormState[Object.keys(obj)[0]] = Object.values(obj)[0]
+  })
   
   
-  // {
-  //   contact_type: "",
-  //   contact: "",
-  //   officer_details_contact_type: "",
-  //   officer_details_contact: "",
-  //   officer_name:"",
-  //   officer_reg_no:"",
-  //   officer_title:""
-    
-  // }
+  console.log({initialFormState})
 
+  
   // const formReducer = (state, action) => {
   //   if (Object.keys(initialFormState).includes(action.type)) {
   //     return {
@@ -103,6 +114,46 @@ export function FacilityContactsForm() {
     ))()
   ])
 
+  const formReducer = (state, action) => {
+    if (Object.keys(initialFormState).includes(action.type)) {
+      return {
+          ...state,
+          [action.type]: action.value
+      }
+  } else {
+      return state
+  }
+}
+  
+const [formState, dispatch] = useReducer(formReducer, initialFormState)
+
+
+useEffect(() => {
+
+  if (window && window.sessionStorage.getItem('facilityContactForm') !== null) {
+      Object.keys(initialFormState).forEach((field) => {
+         
+            dispatch({ type: `${field}`, value: JSON.parse(window.sessionStorage.getItem('facilityContactForm'))[`${field}`] })
+
+      })
+  
+  if (facilityTypeRef.current !== null) {
+      facilityTypeRef.current.setValue(JSON.parse(window.sessionStorage.getItem('facilityContactForm'))?.facility_type, 'set-value')
+  
+  }
+
+
+  if (facilityTypeDetailsRef.current !== null) {
+      facilityTypeDetailsRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type_details, 'set-value')
+  }
+
+}
+
+// Initialize Select Options
+
+}, [])
+
+
   const handleSubmit = () => {
     console.log({ ...formState })
     setFormId(prev => (prev + 1))
@@ -112,6 +163,10 @@ export function FacilityContactsForm() {
 const handlePrevious = () => {
     setFormId(prev => (prev - 1))
 }
+
+// Ref
+
+const officerTitleRef = useRef();
 
 
   return (
@@ -167,8 +222,8 @@ const handlePrevious = () => {
                     setFacilityContacts={setFacilityContacts}
                     contacts={[null, null, null]}
                     setIndex={dispatchContactIndex}
-                    fieldNames={['contact_type', 'contact']}
                     count={facilityContacts.length}
+                    dispatch={dispatch}
                     index={contactIndex.facility}
 
                   />
@@ -208,6 +263,7 @@ const handlePrevious = () => {
             required
             type='text'
             name='officer_name'
+            onChange={() => {dispatch({ type: e.target.name, value: e.target.value })}}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
           />
         </div>
@@ -222,6 +278,7 @@ const handlePrevious = () => {
           <input
             type='text'
             name='officer_reg_no'
+            onChange={() => {dispatch({ type: e.target.name, value: e.target.value })}}
             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
           />
         </div>
@@ -237,7 +294,9 @@ const handlePrevious = () => {
               *
             </span>{' '}
           </label>
-          <Select options={options['10']?.job_titles}
+          <Select
+            ref={officerTitleRef} 
+            options={options['10']?.job_titles}
             required
             placeholder="Select Job Title"
             name="officer_title"
@@ -291,7 +350,7 @@ const handlePrevious = () => {
                         setFacilityContacts={setOfficerContactDetails}
                         contacts={[null, null, null]}
                         setIndex={dispatchContactIndex}
-                        fieldNames={['officer_details_contact_type', 'officer_details_contact']}
+                        dispatch={dispatch}
                         index={contactIndex.officer}
 
                       />

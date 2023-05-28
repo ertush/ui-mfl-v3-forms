@@ -3,6 +3,8 @@ import { useRouter } from 'next/router'
 import React from 'react'
 
 const Login = (props) => {
+    console.log({env: process.env.TOKEN_URL})
+
     const router = useRouter()
     const [username, setUsername] = React.useState('')
     const [password, setPassword] = React.useState('')
