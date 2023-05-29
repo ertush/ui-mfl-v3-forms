@@ -105,6 +105,9 @@ return (
     
     >
     {/* Collection Date */}
+    {
+        console.log('rerendering...')
+    }
     <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
         <label
             htmlFor='collection_date'
