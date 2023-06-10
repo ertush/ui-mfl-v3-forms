@@ -4,7 +4,9 @@ import {
     ChevronDoubleLeftIcon,
 } from '@heroicons/react/solid';
 
-import Select from 'react-select';
+// import Select from 'react-select';
+
+import Select from '../components/formComponents/Select'
 
 // import Alert from '@mui/material/Alert';
 
@@ -52,7 +54,7 @@ export function BasicDetailsForm() {
         official_name: "",
         name: "",
         facility_type: "",
-        facility_type_options: null,
+        facility_type_options: "",
         facility_type_details: "",
         operation_status: "",
         date_established: "",
@@ -71,7 +73,7 @@ export function BasicDetailsForm() {
         number_of_isolation_beds: "",
         number_of_general_theatres: "",
         number_of_maternity_theatres: "",
-        facility_catchment_population: null,
+        facility_catchment_population: "",
         reporting_in_dhis: null,
         admission_status: "",
         nhif_accreditation: null,
@@ -144,6 +146,67 @@ export function BasicDetailsForm() {
 
     })()
 
+    const ownerDetailsOption = (() => {
+        // console.log({owner_type: formState.owner_type})							
+        switch(formState.owner_type?.label){
+            case "Private Practice":
+
+
+                return [
+                    options['2']?.owners.filter(({label}) => label == "Private Practice- Pharmacist")[0] || {},
+                    options['2']?.owners.filter(({label}) => label == "Private Practice - Private Company")[0] || {},
+                    options['2']?.owners.filter(({label}) => label == "Private Practice Lab Technician/Technologist")[0] || {},
+                    options['2']?.owners.filter(({label}) => label == "Private Practice - Nurse / Midwifery")[0] || {},
+                    options['2']?.owners.filter(({label}) => label == "Private Practice - Medical Specialist")[0] || {},
+                    options['2']?.owners.filter(({label}) => label == "Private Practice - General Practitioner")[0] || {},
+                    options['2']?.owners.filter(({label}) => label == "Private Practice - Clinical Officer")[0] || {},
+                    options['2']?.owners.filter(({label}) => label == "Private Practice - Private Institution Academic")[0] || {}
+                
+                     ] 
+                
+            case 'Non-Governmental Organizations':
+                return  options['2']?.owners.filter(({label}) => label == 'Non-Governmental Organizations') || []
+                
+
+            case 'Ministry of Health':
+
+                return [
+                    options['2']?.owners.filter(({label}) => label == "Public Institution - Parastatal")[0] || {},
+                    options['2']?.owners.filter(({label}) => label == 'Ministry of Health')[0] || {},
+                    options['2']?.owners.filter(({label}) => label == 'Armed Forces')[0] || {},
+                    options['2']?.owners.filter(({label}) => label == 'Kenya Police Service')[0] || {},
+                    options['2']?.owners.filter(({label}) => label == 'National Youth Service')[0] || {},
+                    options['2']?.owners.filter(({label}) => label == 'Prisons')[0] || {}
+
+                ]																				
+                
+            case 'Faith Based Organization':																		
+
+                return [
+                            options['2']?.owners.filter(({label}) => label == 'Seventh Day Adventist')[0] || {},
+                            options['2']?.owners.filter(({label}) => label == 'Supreme Council for Kenya Muslims')[0] || {},
+                            options['2']?.owners.filter(({label}) => label == 'Other Faith Based')[0] || {},
+                            options['2']?.owners.filter(({label}) => label == 'Kenya Episcopal Conference-Catholic Secretariat')[0] || {},
+                            options['2']?.owners.filter(({label}) => label == 'Christian Health Association of Kenya')[0] || {},
+                        ]
+
+                        
+
+            
+        }
+    })() ?? [];
+
+    const operationStatusOptions = [
+        {
+            value: '190f470f-9678-47c3-a771-de7ceebfc53c',
+            label: 'Non-Operational',
+        },
+        {
+            value: 'ae75777e-5ce3-4ac9-a17e-63823c34b55e',
+            label: 'Operational',
+        },
+    ]
+
     const facilityTypeDetailOptions = (() => {
         const f_types = [
             'STAND ALONE',
@@ -205,50 +268,50 @@ export function BasicDetailsForm() {
 
             })
         
-        if (facilityTypeRef.current !== null) {
-            facilityTypeRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type, 'set-value')
+        if (facilityTypeRef.current !== null && facilityTypeRef.current.value === "") {
+            facilityTypeRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type.value
         
         }
 
 
-        if (facilityTypeDetailsRef.current !== null) {
-            facilityTypeDetailsRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type_details, 'set-value')
+        if (facilityTypeDetailsRef.current !== null && facilityTypeDetailsRef.current.value === "") {
+            facilityTypeDetailsRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type_details.value
         }
 
-        if (operationStatusRef.current !== null) {
-            operationStatusRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.operation_status, 'set-value')
+        if (operationStatusRef.current !== null && operationStatusRef.current.value === "") {
+            operationStatusRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.operation_status.value
         }
 
-        if (ownerCategoryRef.current !== null) {
-            ownerCategoryRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.owner_type, 'set-value')
+        if (ownerCategoryRef.current !== null && ownerCategoryRef.current.value === "") {
+            ownerCategoryRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.owner_type.value
         }
 
-        if (ownerDetailsRef.current !== null) {
-            ownerDetailsRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.owner, 'set-value')
+        if (ownerDetailsRef.current !== null && ownerDetailsRef.current.value === "") {
+            ownerDetailsRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.owner.value
         }
 
-        if (kephLevelRef.current !== null) {
-            kephLevelRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.keph_level, 'set-value')
+        if (kephLevelRef.current !== null && kephLevelRef.current.value === "") {
+            kephLevelRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.keph_level.value
         }
 
-        if (facilityAdmissionsRef.current !== null) {
-            facilityAdmissionsRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.admission_status, 'set-value')
+        if (facilityAdmissionsRef.current !== null && facilityAdmissionsRef.current.value === "") {
+            facilityAdmissionsRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.admission_status.value
         }
 
         if (countyRef.current !== null) {
-            countyRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.county_id, 'set-value')
+            countyRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.county_id.value
         }
 
         if (subCountyRef.current !== null) {
-            subCountyRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.sub_county_id, 'set-value')
+            subCountyRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.sub_county_id.value
         }
 
         if (constituencyRef.current !== null) {
-            constituencyRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.constituency_id, 'set-value')
+            constituencyRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.constituency_id.value
         }
 
         if (wardRef.current !== null) {
-            wardRef.current.setValue(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.ward, 'set-value')
+            wardRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.ward.value
         }
     }
 
@@ -396,44 +459,43 @@ export function BasicDetailsForm() {
                     </label>
 
                     <Select
-                        ref={facilityTypeRef}
+                        selectref={facilityTypeRef}
                         options={facilityTypeOptions}
                         required
                         placeholder='Select a facility type...'
-                        onChange={(option) => {
-                            
-
-                    switch(option?.value){
+                        onChange={(e) => {
+                       
+                    switch(e.target.value){
                         // STAND ALONE 
                         case '85f2099b-a2f8-49f4-9798-0cb48c0875ff':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 2'))
+                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')
                             break;
                         // DISPENSARY
                         case '87626d3d-fd19-49d9-98da-daca4afe85bf':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 2'))
+                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')
                             break;
 
                         // MEDICAL CLINIC
                         case '8949eeb0-40b1-43d4-a38d-5d4933dc209f':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 2'))
+                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')
                             break;
 
                         // NURSING HOME
                         case '0b7f9699-6024-4813-8801-38f188c834f5':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 2'))
+                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')
                             break;
 
                         // HEALTH CENTER
                         case '9ad22615-48f2-47b3-8241-4355bb7db835':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 3'))
+                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 3')
                             break;
 
                         // MEDICAL CENTER
                         case 'df69577d-b90f-4b66-920a-d0f3ecd95191':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.setValue(options['4']?.keph.find(({label}) => label === 'Level 3'))
+                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 3')
                             break;
-                }
-                            dispatch({ type: 'facility_type', value: { label: option?.label, value: option?.value } })
+                }           
+                            dispatch({ type: 'facility_type', value: { value: e.target.value } })
                         }}
                         name='facility_type'
                         className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
@@ -452,12 +514,12 @@ export function BasicDetailsForm() {
                         </span>
                     </label>
                     <Select
-                        ref={facilityTypeDetailsRef}
+                        selectref={facilityTypeDetailsRef}
                         options={facilityTypeDetailOptions}
                         required
                         placeholder='Select a facility type details...'
-                        onChange={(option) => {
-                            dispatch({ type: 'facility_type_details', value: { label: option?.label, value: option?.value } })
+                        onChange={(e) => {
+                            dispatch({ type: 'facility_type_details', value: { value: e.target.value } })
                         }}
                         name='facility_type_details'
                         className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
@@ -477,20 +539,12 @@ export function BasicDetailsForm() {
                         </span>
                     </label>
                     <Select
-                        ref={operationStatusRef}
-                        options={[
-                            {
-                                value: '190f470f-9678-47c3-a771-de7ceebfc53c',
-                                label: 'Non-Operational',
-                            },
-                            {
-                                value: 'ae75777e-5ce3-4ac9-a17e-63823c34b55e',
-                                label: 'Operational',
-                            },
-                        ]}
+                        selectref={operationStatusRef}
+                        options={operationStatusOptions}
                         required
-                        onChange={(option) => {
-                            dispatch({ type: 'operation_status', value: { label: option?.label, value: option?.value } })
+                        onChange={(e) => {
+                            
+                            dispatch({ type: 'operation_status', value: { value: e.target.value } })
                         }}
                         placeholder='Select an operation status...'
                         name='operation_status'
@@ -564,13 +618,14 @@ export function BasicDetailsForm() {
                         </span>
                     </label>
                     <Select
-                        ref={ownerCategoryRef}
+                        selectref={ownerCategoryRef}
                         options={options['3']?.owner_types} //formState.owner_type_options
                         required
                         placeholder='Select owner..'
                         name='owner_type'
-                        onChange={(option) => {
-                            dispatch({ type: 'owner_type', value: { label: option?.label, value: option?.value } })
+                        onChange={(e) => {
+
+                            dispatch({ type: 'owner_type', value: {  value: e.target.value } })
                         }}
                         className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
                     />
@@ -588,60 +643,13 @@ export function BasicDetailsForm() {
                         </span>
                     </label>
                     <Select
-                        ref={ownerDetailsRef}
-                        options={(() => {
-							// console.log({owner_type: formState.owner_type})							
-                            switch(formState.owner_type?.label){
-                                case "Private Practice":
-
-
-                                    return [
-                                        options['2']?.owners.filter(({label}) => label == "Private Practice- Pharmacist")[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == "Private Practice - Private Company")[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == "Private Practice Lab Technician/Technologist")[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == "Private Practice - Nurse / Midwifery")[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == "Private Practice - Medical Specialist")[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == "Private Practice - General Practitioner")[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == "Private Practice - Clinical Officer")[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == "Private Practice - Private Institution Academic")[0] || {}
-                                    
-                                         ] 
-                                    
-                                case 'Non-Governmental Organizations':
-                                    return  options['2']?.owners.filter(({label}) => label == 'Non-Governmental Organizations') || []
-                                    
-
-                                case 'Ministry of Health':
-                    
-                                    return [
-                                        options['2']?.owners.filter(({label}) => label == "Public Institution - Parastatal")[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == 'Ministry of Health')[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == 'Armed Forces')[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == 'Kenya Police Service')[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == 'National Youth Service')[0] || {},
-                                        options['2']?.owners.filter(({label}) => label == 'Prisons')[0] || {}
-
-                                    ]																				
-                                    
-                                case 'Faith Based Organization':																		
-
-                                    return [
-                                                options['2']?.owners.filter(({label}) => label == 'Seventh Day Adventist')[0] || {},
-                                                options['2']?.owners.filter(({label}) => label == 'Supreme Council for Kenya Muslims')[0] || {},
-                                                options['2']?.owners.filter(({label}) => label == 'Other Faith Based')[0] || {},
-                                                options['2']?.owners.filter(({label}) => label == 'Kenya Episcopal Conference-Catholic Secretariat')[0] || {},
-                                                options['2']?.owners.filter(({label}) => label == 'Christian Health Association of Kenya')[0] || {},
-                                            ]
-
-                                            
-
-                                
-                            }
-                        })() ?? []}
+                        selectref={ownerDetailsRef}
+                        options={ownerDetailsOption}
                         required
                         placeholder='Select an owner..'
-                        onChange={(option) => {
-                            dispatch({ type: 'owner', value: { label: option?.label, value: option?.value } })
+                        onChange={(e) => {
+                            
+                            dispatch({ type: 'owner', value: { value: e.target.value } })
                         }}
                         name='owner'
                         className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
@@ -656,11 +664,12 @@ export function BasicDetailsForm() {
                         KEPH Level
                     </label>
                     <Select
-                        ref={kephLevelRef}
+                        selectref={kephLevelRef}
                         options={options['4']?.keph}
-                        isOptionDisabled={(option) => true}
-                        onChange={(option) => {
-                            dispatch({ type: 'keph_level', value: { label: option?.label, value: option?.value } })
+                        disabled
+                        onChange={(e) => {
+                           
+                            dispatch({ type: 'keph_level', value: { value: e.target.value } })
                         }}
                         placeholder='Select a KEPH Level..'
                         name='keph_level'
@@ -1006,12 +1015,13 @@ export function BasicDetailsForm() {
                         </span>
                     </label>
                     <Select
-                        ref={facilityAdmissionsRef}
+                        selectref={facilityAdmissionsRef}
                         options={options['5']?.facility_admission_status}
                         required
                         placeholder='Select an admission status..'
-                        onChange={(option) => {
-                            dispatch({ type: 'admission_status', value: { label: option?.label, value: option?.value } })
+                        onChange={(e) => {
+                           
+                            dispatch({ type: 'admission_status', value: { value: e.target.value } })
                         }}
                         name='admission_status'
                         className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
@@ -1208,12 +1218,12 @@ export function BasicDetailsForm() {
                                     </span>
                                 </label>
                                 <Select
-                                    ref={countyRef}
+                                    selectref={countyRef}
                                     options={options['6']?.counties}
                                     required
                                     placeholder='Select County'
-                                    onChange={(option) => {
-                                        dispatch({ type: 'county_id', value: { label: option?.label, value: option?.value } })
+                                    onChange={(e) => {
+                                        dispatch({ type: 'county_id', value: { value: e.target.value } })
                                     }}
 
                                     name='county_id'
@@ -1235,12 +1245,13 @@ export function BasicDetailsForm() {
                                     </span>
                                 </label>
                                 <Select
-                                    ref={subCountyRef}
+                                    selectref={subCountyRef}
                                     options={options['7']?.sub_counties}
                                     required
                                     placeholder='Select Sub County'
-                                    onChange={(option) => {
-                                        dispatch({ type: 'sub_county_id', value: { label: option?.label, value: option?.value } })
+                                    onChange={(e) => {
+                                       
+                                        dispatch({ type: 'sub_county_id', value: { value: e.target.value } })
                                     }}
                                     name='sub_county_id'
 
@@ -1262,12 +1273,13 @@ export function BasicDetailsForm() {
                                     </span>
                                 </label>
                                 <Select
-                                    ref={constituencyRef}
+                                    selectref={constituencyRef}
                                     options={options['8']?.constituencies}
                                     required
                                     placeholder='Select Constituency'
-                                    onChange={(option) => {
-                                        dispatch({ type: 'constituency_id', value: { label: option?.label, value: option?.value } })
+                                    onChange={(e) => {
+                                        
+                                        dispatch({ type: 'constituency_id', value: { value: e.target.value } })
                                     }}
                                     name='constituency_id'
                                     className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
@@ -1288,12 +1300,13 @@ export function BasicDetailsForm() {
                                     </span>
                                 </label>
                                 <Select
-                                    ref={wardRef}
+                                    selectref={wardRef}
                                     options={options['9']?.wards}
                                     required
                                     placeholder='Select Ward'
-                                    onChange={(option) => {
-                                        dispatch({ type: 'ward', value: { label: option?.label, value: option?.value } })
+                                    onChange={(e) => {
+                                        
+                                        dispatch({ type: 'ward', value: { value: e.target.value } })
                                     }}
                                     name='ward'
                                     className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
@@ -1442,4 +1455,3 @@ export function BasicDetailsForm() {
         </>
     )
 }
-

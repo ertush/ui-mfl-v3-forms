@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef } from 'react';
 import { FormContext } from './Forms';
 import { useFormik } from 'formik';
+import  Select  from '../components/formComponents/Select';
 
 
 export function HumanresourcesForm() {
@@ -162,17 +163,14 @@ export function HumanresourcesForm() {
           </span>
         </label>
 
-        <select
-          ref={facilityTypeRef}
+        <Select 
+          selectRef={facilityTypeRef}
+          required
+          onChange={formik.handleChange} 
           name="facility_type"
-          onChange={formik.handleChange}
-          className='flex-none w-full p-2 border-2 border-gray-200 bg-[#f9fafb] rounded flex-grow  placeholder-gray-100 focus:bg-white focus:border-gray-600 outline-none' >
-          {
-            ((options) => options.map(({ value, label }, i) =>
-              <option className='py-1 hover:bg-red-300 text-normal font-normal' key={i} value={value}>{label}</option>
-            ))([{ label: "Select facility type...", value: 0 }, { label: "school", value: 1 }, { label: "class", value: 2 }])
-          }
-        </select>
+          options={[{ label: "Select facility type...", value: 0 }, { label: "school", value: 1 }, { label: "class", value: 2 }]}
+        />
+        
       </div>
 
       <div className=' w-full flex flex-col items-start justify-start p-3 rounded border border-gray-300/70 bg-gray-50 h-auto'>
