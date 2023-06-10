@@ -56,7 +56,7 @@ export function HumanresourcesForm() {
 
   // Side effect for updating sessionStorage
   useEffect(() => {
-    console.log(formik.values.is_classified)
+    // console.log(formik.values.is_classified)
     if (window &&
       formik.values.collection_date !== '' ||
       formik.values.longitude !== '' ||
@@ -164,7 +164,7 @@ export function HumanresourcesForm() {
         </label>
 
         <Select 
-          selectRef={facilityTypeRef}
+          selectref={facilityTypeRef}
           required
           onChange={formik.handleChange} 
           name="facility_type"

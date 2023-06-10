@@ -3,64 +3,34 @@ import {
     ChevronDoubleRightIcon,
     ChevronDoubleLeftIcon,
 } from '@heroicons/react/solid';
-
-// import Select from 'react-select';
-
-import Select from '../components/formComponents/Select'
-
-// import Alert from '@mui/material/Alert';
-
+import Select from '../components/formComponents/Select';
 import { FormContext } from './Forms';
-
-import { useReducer, useContext, useEffect, useRef } from 'react'
-
+import { useContext, useEffect, useRef } from 'react';
 import { FormOptionsContext } from '@/pages';
+import { useFormik } from 'formik';
 
-// import { useQuery } from '@tanstack/react-query'
-
-// import axios from 'axios';
 
 
 
 export function BasicDetailsForm() {
 
-
+     // Options Context
      const options = useContext(FormOptionsContext)
 
     // Form Context
-
-
-    // console.log({options})
-
     const setFormId = useContext(FormContext);
 
 
-
-    // const { data: facilityTypes } = useFormData('/facilities/facility_types/?is_active=true&page_size=10000')
-
-    // const { data: owners} = useFormData('/facilities/owners/?is_active=true&page_size=10000')
-
-    // const { data: ownerTypes} = useFormData('/facilities/owner_types/?is_active=true&page_size=10000')
-
-    // const { data: keph} = useFormData('/facilities/keph/?is_active=true&page_size=10000')
-
-    // const { data: facility_admission_status} = useFormData('/facilities/facility_admission_status/?is_active=true&page_size=10000')
-
-    // const {data: job_titles} = useFormData('/facilities/job_titles/?fields=id,name')
-    
-    // console.log({ ownerTypes })
 
     const initialFormState = {
         official_name: "",
         name: "",
         facility_type: "",
-        facility_type_options: "",
         facility_type_details: "",
         operation_status: "",
         date_established: "",
-        accredited_lab_iso_15189: null,
+        accredited_lab_iso_15189: undefined,
         owner_type: "",
-        owner_type_options: "",
         owner: "",
         keph_level: "",
         number_of_beds: "",
@@ -74,15 +44,15 @@ export function BasicDetailsForm() {
         number_of_general_theatres: "",
         number_of_maternity_theatres: "",
         facility_catchment_population: "",
-        reporting_in_dhis: null,
+        reporting_in_dhis: undefined,
         admission_status: "",
-        nhif_accreditation: null,
-        is_classified: null,
-        open_whole_day: null,
-        open_late_night: null,
-        open_public_holidays: null,
-        open_weekends: null,
-        open_normal_day: null,
+        nhif_accreditation: undefined,
+        is_classified: undefined,
+        open_whole_day: undefined,
+        open_late_night: undefined,
+        open_public_holidays: undefined,
+        open_weekends: undefined,
+        open_normal_day: undefined,
         county_id: "",
         sub_county_id: "",
         constituency_id: "",
@@ -91,39 +61,17 @@ export function BasicDetailsForm() {
         plot_number: "",
         nearest_landmark: "",
         location_desc: "",
-        facility_checklist_document: null
+        facility_checklist_document: undefined
 
     }
 
-    // Refs
+    const formik = useFormik({
+        initialValues: initialFormState,
+        onSubmit: values => console.log({ ...values })
+    
+      });
 
-    const facilityTypeRef = useRef(null);
-    const facilityTypeDetailsRef = useRef(null);
-    const operationStatusRef = useRef(null);
-    const ownerCategoryRef = useRef(null);
-    const ownerDetailsRef = useRef(null);
-    const kephLevelRef = useRef(null);
-    const facilityAdmissionsRef = useRef(null);
-    const countyRef = useRef(null);
-    const subCountyRef = useRef(null);
-    const constituencyRef = useRef(null);
-    const wardRef = useRef(null);
-
-    // Form State
-
-    const formReducer = (state, action) => {
-        if (Object.keys(initialFormState).includes(action.type)) {
-            return {
-                ...state,
-                [action.type]: action.value
-            }
-        } else {
-            return state
-        }
-    }
-
-    const [formState, dispatch] = useReducer(formReducer, initialFormState)
-
+    // Options
     const facilityTypeOptions = (() => {
         const f_types = [
             'STAND ALONE',
@@ -147,8 +95,10 @@ export function BasicDetailsForm() {
     })()
 
     const ownerDetailsOption = (() => {
-        // console.log({owner_type: formState.owner_type})							
-        switch(formState.owner_type?.label){
+    	
+        const label = options['3']?.owner_types.find(({value}) => value == formik.values.owner_type)?.label;
+        					
+        switch(label){
             case "Private Practice":
 
 
@@ -181,7 +131,7 @@ export function BasicDetailsForm() {
                 ]																				
                 
             case 'Faith Based Organization':																		
-
+            handlde
                 return [
                             options['2']?.owners.filter(({label}) => label == 'Seventh Day Adventist')[0] || {},
                             options['2']?.owners.filter(({label}) => label == 'Supreme Council for Kenya Muslims')[0] || {},
@@ -189,12 +139,14 @@ export function BasicDetailsForm() {
                             options['2']?.owners.filter(({label}) => label == 'Kenya Episcopal Conference-Catholic Secretariat')[0] || {},
                             options['2']?.owners.filter(({label}) => label == 'Christian Health Association of Kenya')[0] || {},
                         ]
+                    
 
-                        
+              default:
+                return []          
 
             
         }
-    })() ?? [];
+    })();
 
     const operationStatusOptions = [
         {
@@ -224,7 +176,7 @@ export function BasicDetailsForm() {
 
         // console.log({all_ftypes});
 
-        switch(formState.facility_type?.value){
+        switch(formik.values.facility_type){
                 // STAND ALONE 
                 case '85f2099b-a2f8-49f4-9798-0cb48c0875ff':
                     return all_ftypes[0].map(({id:value, name:label}) => ({label, value}))
@@ -257,122 +209,169 @@ export function BasicDetailsForm() {
     })()
 
     // Side Effects
-
-
+    // onMount
     useEffect(() => {
 
-        if (window && window.sessionStorage.getItem('basicDetailsForm') !== null) {
-            Object.keys(initialFormState).forEach((field) => {
-               
-                  dispatch({ type: `${field}`, value: JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))[`${field}`] })
-
-            })
+        if (window && window.sessionStorage.getItem('basicDetailsForm')) {
         
-        if (facilityTypeRef.current !== null && facilityTypeRef.current.value === "") {
-            facilityTypeRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type.value
+        formik.setValues(JSON.parse(window.sessionStorage.getItem('basicDetailsForm')))
+
+         
+        if (facilityTypeRef.current !== null) {
+            facilityTypeRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type
         
         }
 
 
-        if (facilityTypeDetailsRef.current !== null && facilityTypeDetailsRef.current.value === "") {
-            facilityTypeDetailsRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type_details.value
+        if (facilityTypeDetailsRef.current !== null) {
+            facilityTypeDetailsRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type_details;
         }
 
-        if (operationStatusRef.current !== null && operationStatusRef.current.value === "") {
-            operationStatusRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.operation_status.value
+        if (operationStatusRef.current !== null) {
+            operationStatusRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.operation_status;
         }
 
-        if (ownerCategoryRef.current !== null && ownerCategoryRef.current.value === "") {
-            ownerCategoryRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.owner_type.value
+        if (ownerCategoryRef.current !== null) {
+            ownerCategoryRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.owner_type;
         }
 
-        if (ownerDetailsRef.current !== null && ownerDetailsRef.current.value === "") {
-            ownerDetailsRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.owner.value
+        if (ownerDetailsRef.current !== null) {
+            ownerDetailsRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.owner;
         }
 
-        if (kephLevelRef.current !== null && kephLevelRef.current.value === "") {
-            kephLevelRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.keph_level.value
+        if (kephLevelRef.current !== null) {
+            kephLevelRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.keph_level;
         }
 
-        if (facilityAdmissionsRef.current !== null && facilityAdmissionsRef.current.value === "") {
-            facilityAdmissionsRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.admission_status.value
+        if (facilityAdmissionsRef.current !== null) {
+            facilityAdmissionsRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.admission_status;
         }
 
         if (countyRef.current !== null) {
-            countyRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.county_id.value
+            countyRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.county_id;
         }
 
         if (subCountyRef.current !== null) {
-            subCountyRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.sub_county_id.value
+            subCountyRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.sub_county_id;
         }
 
         if (constituencyRef.current !== null) {
-            constituencyRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.constituency_id.value
+            constituencyRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.constituency_id;
         }
 
         if (wardRef.current !== null) {
-            wardRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.ward.value
+            wardRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.ward;
         }
     }
 
-    // Initialize Select Options
+ 
 
     }, [])
 
-
-    // useEffect(() => {
-
-        
-    //     // Populate Select Options
-
-    //     // if(options['0']?.facility_types){
-           
-
-    //     //     // console.log({facilityTypeOptions})
-
-    //     //     dispatch({type:'facility_type_options', value: facilityTypeOptions})
-            
-           
-    //     // }
-
-    //     // For owners
-
-    //     // if(options['3']?.owner_types){
-
-    //     //     dispatch({type:'owner_type_options', value: options['3']?.owner_types.map(({label, value}) => ({
-    //     //         label,
-    //     //         value
-    //     //     }))})
-
-    //     // }
-
-    // }, [])
-
+    // Update Session storage
 
     useEffect(() => {
 
-        const storeFields = {};
+        // console.log(formik.values.is_classified)
 
         Object.keys(initialFormState).forEach((field) => {
 
-            storeFields[`${field}`] = formState[`${field}`];
-
             if (
                 window &&
-                formState[`${field}`] !== "" &&
-                formState[`${field}`] !== null
+                formik.values.official_name !== "" ||
+                formik.values. name !== "" ||
+                formik.values.facility_type !== "" ||
+                formik.values.facility_type_details !== "" ||
+                formik.values.operation_status !== "" ||
+                formik.values.date_established !== "" ||
+                formik.values.accredited_lab_iso_15189 !== undefined ||
+                formik.values.owner_type !== "" ||
+                formik.values.owner !== "" ||
+                formik.values.keph_level !== "" ||
+                formik.values.number_of_beds !== "" ||
+                formik.values.number_of_inpatient_beds !== "" ||
+                formik.values.number_of_cots !== "" ||
+                formik.values.number_of_emergency_casualty_beds !== "" ||
+                formik.values.number_of_icu_beds !== "" ||
+                formik.values.number_of_hdu_beds !== "" ||
+                formik.values.number_of_maternity_beds !== "" ||
+                formik.values.number_of_isolation_beds !== "" ||
+                formik.values.number_of_general_theatres !== "" ||
+                formik.values.number_of_maternity_theatres !== "" ||
+                formik.values.facility_catchment_population !== "" ||
+                formik.values.reporting_in_dhis !== undefined ||
+                formik.values.admission_status !== "" ||
+                formik.values.nhif_accreditation !== undefined ||
+                formik.values.is_classified !== undefined ||
+                formik.values.open_whole_day !== undefined ||
+                formik.values.open_late_night !== undefined ||
+                formik.values.open_public_holidays !== undefined ||
+                formik.values.open_weekends !== undefined ||
+                formik.values.open_normal_day !== undefined ||
+                formik.values.county_id !== "" ||
+                formik.values.sub_county_id !== "" ||
+                formik.values.constituency_id !== "" ||
+                formik.values.ward !== "" ||
+                formik.values.town_name !== "" ||
+                formik.values.plot_number !== "" ||
+                formik.values.nearest_landmark !== "" ||
+                formik.values.location_desc !== "" ||
+                formik.values.facility_checklist_document !== undefined 
             ) {
-                window.sessionStorage.setItem('basicDetailsForm', JSON.stringify(storeFields))
+                window.sessionStorage.setItem('basicDetailsForm', JSON.stringify({...formik.values}))
             }
         })
 
 
-    }, (() => Object.keys(initialFormState).map((field) => formState[`${field}`]))())
+    }, (() => Object.keys(initialFormState).map((field) => formik.values[`${field}`]))())
+
+    // Update keph level drop down
+    useEffect(() => {
+        switch(formik.values.facility_type){
+            // STAND ALONE 
+            case '85f2099b-a2f8-49f4-9798-0cb48c0875ff':
+                const keph_value = options['4']?.keph.find(({label}) => label === 'Level 2')?.value;
+                if(kephLevelRef.current !== null) kephLevelRef.current.value = keph_value;
+                if(window && window.sessionStorage.getItem('basicDetailsForm').includes('keph_level')){
+                    const basicDetailsForm = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))
+                    basicDetailsForm.keph_level =  keph_value;
+                    console.log({level_2: keph_value})
+                    window.sessionStorage.setItem('basciDetailsForm', JSON.stringify(basicDetailsForm))
+                }
+
+                break;
+            // DISPENSARY
+            case '87626d3d-fd19-49d9-98da-daca4afe85bf':
+                if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')?.value
+                break;
+
+            // MEDICAL CLINIC
+            case '8949eeb0-40b1-43d4-a38d-5d4933dc209f':
+                if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')?.value
+                break;
+
+            // NURSING HOME
+            case '0b7f9699-6024-4813-8801-38f188c834f5':
+                if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')?.value
+                break;
+
+            // HEALTH CENTER
+            case '9ad22615-48f2-47b3-8241-4355bb7db835':
+                if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 3')?.value
+                break;
+
+            // MEDICAL CENTER
+            case 'df69577d-b90f-4b66-920a-d0f3ecd95191':
+                if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 3')?.value
+                break;
+            }
+            
+    },[formik.values.facility_type])
 
     // Form handlers
 
     const handleSubmit = () => {
-        console.log({ ...formState })
+        console.log({ ...formik.values })
         setFormId(prev => (prev + 1))
     }
 
@@ -381,20 +380,33 @@ export function BasicDetailsForm() {
         setFormId(prev => (prev - 1))
     }
 
-      // Render
+    // Refs
 
-    // if(isLoading) return <Alert severity="info" sx={{width:'100%'}}> Loading ...</Alert>
+    const facilityTypeRef = useRef(null);
+    const facilityTypeDetailsRef = useRef(null);
+    const operationStatusRef = useRef(null);
+    const ownerCategoryRef = useRef(null);
+    const ownerDetailsRef = useRef(null);
+    const kephLevelRef = useRef(null);
+    const facilityAdmissionsRef = useRef(null);
+    const countyRef = useRef(null);
+    const subCountyRef = useRef(null);
+    const constituencyRef = useRef(null);
+    const wardRef = useRef(null);
+    const accreditedYesRef = useRef(null);
+    const accreditedNoRef = useRef(null);
+    const nhifYesRef = useRef(null);
+    const nhifNoRef = useRef(null);
+    const reportingDHISYesRef = useRef(null);
+    const reportingDHISNoRef = useRef(null);
 
-    // if(tokenError) return <Alert severity="error" sx={{width:'100%'}}> Unable to fetch token</Alert>
-
-    // if(error) return <Alert severity="error" sx={{width:'100%'}}> Unable to fetch Form Data</Alert>
-    // 
-  
     return (
         <>
 
         {
-            console.log({constituencies: options['8']?.constituencies})
+            // debug area for form
+            // console.log({constituencies: options['8']?.constituencies})
+        
             
         }
             <h4 className='text-lg uppercase pb-2 border-b border-gray-100 w-full mb-4 font-semibold text-blue-900'>
@@ -419,8 +431,8 @@ export function BasicDetailsForm() {
                     <input
                         required
                         type='text'
-                        value={formState.official_name}
-                        onChange={(e) => { dispatch({ type: e.target.name, value: e.target.value }) }}
+                        onChange={formik.handleChange}
+                        value={formik.values.official_name}
                         name='official_name'
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
@@ -439,8 +451,8 @@ export function BasicDetailsForm() {
                     <input
                         required
                         type='text'
-                        value={formState.name}
-                        onChange={(e) => { dispatch({ type: e.target.name, value: e.target.value }) }}
+                        onChange={formik.handleChange}
+                        value={formik.values.name}
                         name='name'
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
@@ -461,44 +473,11 @@ export function BasicDetailsForm() {
                     <Select
                         selectref={facilityTypeRef}
                         options={facilityTypeOptions}
+                        placeholder="Select a facility type..."
                         required
-                        placeholder='Select a facility type...'
-                        onChange={(e) => {
-                       
-                    switch(e.target.value){
-                        // STAND ALONE 
-                        case '85f2099b-a2f8-49f4-9798-0cb48c0875ff':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')
-                            break;
-                        // DISPENSARY
-                        case '87626d3d-fd19-49d9-98da-daca4afe85bf':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')
-                            break;
-
-                        // MEDICAL CLINIC
-                        case '8949eeb0-40b1-43d4-a38d-5d4933dc209f':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')
-                            break;
-
-                        // NURSING HOME
-                        case '0b7f9699-6024-4813-8801-38f188c834f5':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 2')
-                            break;
-
-                        // HEALTH CENTER
-                        case '9ad22615-48f2-47b3-8241-4355bb7db835':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 3')
-                            break;
-
-                        // MEDICAL CENTER
-                        case 'df69577d-b90f-4b66-920a-d0f3ecd95191':
-                            if(kephLevelRef.current !== null) kephLevelRef.current.value = options['4']?.keph.find(({label}) => label === 'Level 3')
-                            break;
-                }           
-                            dispatch({ type: 'facility_type', value: { value: e.target.value } })
-                        }}
+                        onChange={formik.handleChange}                      
                         name='facility_type'
-                        className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+                        
                     />
                 </div>
 
@@ -516,13 +495,11 @@ export function BasicDetailsForm() {
                     <Select
                         selectref={facilityTypeDetailsRef}
                         options={facilityTypeDetailOptions}
+                        placeholder="Select facility type details..."
                         required
-                        placeholder='Select a facility type details...'
-                        onChange={(e) => {
-                            dispatch({ type: 'facility_type_details', value: { value: e.target.value } })
-                        }}
+                        onChange={formik.handleChange}
                         name='facility_type_details'
-                        className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+                        
                     />
 
                 </div>
@@ -542,13 +519,10 @@ export function BasicDetailsForm() {
                         selectref={operationStatusRef}
                         options={operationStatusOptions}
                         required
-                        onChange={(e) => {
-                            
-                            dispatch({ type: 'operation_status', value: { value: e.target.value } })
-                        }}
+                        onChange={formik.handleChange}
                         placeholder='Select an operation status...'
                         name='operation_status'
-                        className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+                        
                     />
                 </div>
 
@@ -565,8 +539,8 @@ export function BasicDetailsForm() {
                     </label>
                     <input
                         required
-                        onChange={(e) => { dispatch({ type: e.target.name, value: e.target.value }) }}
-                        value={formState.date_established}
+                        onChange={formik.handleChange}
+                        value={formik.values.date_established}
                         type='date'
                         name='date_established'
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
@@ -582,25 +556,24 @@ export function BasicDetailsForm() {
                     </label>
                     <span className='flex items-center gap-x-1'>
                         <input
+                            ref={accreditedYesRef}
                             type='radio'
                             name='accredited_lab_iso_15189'
-                            id='open_whole_day_yes'
-                            checked={formState.accredited_lab_iso_15189 !== null ? Boolean(formState.accredited_lab_iso_15189) : false}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: true })
-                            }}
+                            id='accredited_lab_iso_15189_yes'
+                            value={formik.values.accredited_lab_iso_15189 !== undefined ? Boolean(formik.values.accredited_lab_iso_15189) : false}
+                            onChange={formik.handleChange}
                         />
                         <small className='text-gray-700'>Yes</small>
                     </span>
                     <span className='flex items-center gap-x-1'>
                         <input
+                            ref={accreditedNoRef}
                             type='radio'
                             name='accredited_lab_iso_15189'
-                            id='open_whole_day_no'
-                            checked={formState.accredited_lab_iso_15189 !== null ? !Boolean(formState.accredited_lab_iso_15189) : false}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: false })
-                            }}
+                            id='accredited_lab_iso_15189_no'
+                            value={formik.values.accredited_lab_iso_15189 !== undefined ? !Boolean(formik.values.accredited_lab_iso_15189) : false}
+                            onChange={formik.handleChange}
+            
                         />
                         <small className='text-gray-700'>No</small>
                     </span>
@@ -621,13 +594,10 @@ export function BasicDetailsForm() {
                         selectref={ownerCategoryRef}
                         options={options['3']?.owner_types} //formState.owner_type_options
                         required
-                        placeholder='Select owner..'
+                        placeholder="Select owner.."
                         name='owner_type'
-                        onChange={(e) => {
-
-                            dispatch({ type: 'owner_type', value: {  value: e.target.value } })
-                        }}
-                        className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+                        onChange={formik.handleChange}
+                        
                     />
                 </div>
 
@@ -643,16 +613,13 @@ export function BasicDetailsForm() {
                         </span>
                     </label>
                     <Select
-                        selectref={ownerDetailsRef}
+                        selectref={ownerDetailsRef} 
                         options={ownerDetailsOption}
+                        placeholder="Select owner detail..."
                         required
-                        placeholder='Select an owner..'
-                        onChange={(e) => {
-                            
-                            dispatch({ type: 'owner', value: { value: e.target.value } })
-                        }}
+                        onChange={formik.handleChange}
                         name='owner'
-                        className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+                        
                     />
                 </div>
 
@@ -666,14 +633,11 @@ export function BasicDetailsForm() {
                     <Select
                         selectref={kephLevelRef}
                         options={options['4']?.keph}
-                        disabled
-                        onChange={(e) => {
-                           
-                            dispatch({ type: 'keph_level', value: { value: e.target.value } })
-                        }}
-                        placeholder='Select a KEPH Level..'
+                        placeholder="Select a KEPH Level.."
+                        
+                        onChange={formik.handleChange}
                         name='keph_level'
-                        className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+                        
                     />
                 </div>
 
@@ -693,10 +657,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='number_of_beds'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.number_of_beds}
+                        onChange={formik.handleChange}
+                        value={formik.values.number_of_beds}
                         readOnly
 
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
@@ -722,10 +684,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='number_of_inpatient_beds'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.number_of_inpatient_beds}
+                        onChange={formik.handleChange}
+                        value={formik.values.number_of_inpatient_beds}
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
                     <label className='text-red-500 mt-1'></label>
@@ -749,10 +709,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='number_of_cots'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.number_of_cots}
+                        onChange={formik.handleChange}
+                        value={formik.values.number_of_cots}
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
                     <label className='text-red-500 mt-1'></label>
@@ -774,10 +732,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='number_of_emergency_casualty_beds'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.number_of_emergency_casualty_beds}
+                        onChange={formik.handleChange}
+                        value={formik.values.number_of_emergency_casualty_beds}
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
                     <label className='text-red-500 mt-1'></label>
@@ -801,10 +757,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='number_of_icu_beds'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.number_of_icu_beds}
+                        onChange={formik.handleChange}
+                        value={formik.values.number_of_icu_beds}
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
                     <label className='text-red-500 mt-1'></label>
@@ -828,10 +782,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='number_of_hdu_beds'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.number_of_hdu_beds}
+                        onChange={formik.handleChange}
+                        value={formik.values.number_of_hdu_beds}
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
                     <label className='text-red-500 mt-1'></label>
@@ -854,10 +806,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='number_of_maternity_beds'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.number_of_maternity_beds}
+                        onChange={formik.handleChange}
+                        value={formik.values.number_of_maternity_beds}
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
                     <label className='text-red-500 mt-1'></label>
@@ -880,10 +830,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='number_of_isolation_beds'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.number_of_isolation_beds}
+                        onChange={formik.handleChange}
+                        value={formik.values.number_of_isolation_beds}
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
                     <label className='text-red-500 mt-1'></label>
@@ -906,10 +854,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='number_of_general_theatres'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.number_of_general_theatres}
+                        onChange={formik.handleChange}
+                        value={formik.values.number_of_general_theatres}
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
                     <label className='text-red-500 mt-1'></label>
@@ -932,10 +878,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='number_of_maternity_theatres'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.number_of_maternity_theatres}
+                        onChange={formik.handleChange}
+                        value={formik.values.number_of_maternity_theatres}
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
                     <label className='text-red-500 mt-1'></label>
@@ -958,10 +902,8 @@ export function BasicDetailsForm() {
                         type='number'
                         min={0}
                         name='facility_catchment_population'
-                        onChange={(e) => {
-                            dispatch({ type: e.target.name, value: e.target.value })
-                        }}
-                        value={formState.facility_catchment_population}
+                        onChange={formik.handleChange}
+                        value={formik.values.facility_catchment_population}
                         className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                     />
                     <label className='text-red-500 mt-1'></label>
@@ -977,11 +919,10 @@ export function BasicDetailsForm() {
                     </label>
                     <span className='flex items-center gap-x-1'>
                         <input
+                            ref={reportingDHISYesRef}
                             type='radio'
-                            checked={formState.reporting_in_dhis !== null ? Boolean(formState.reporting_in_dhis) : false}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: true })
-                            }}
+                            value={formik.values.reporting_in_dhis !== undefined ? Boolean(formik.values.reporting_in_dhis) : false}
+                            onChange={formik.handleChange}
                             name='reporting_in_dhis'
                             id='reporting_in_dhis_yes'
 
@@ -990,11 +931,10 @@ export function BasicDetailsForm() {
                     </span>
                     <span className='flex items-center gap-x-1'>
                         <input
+                            ref={reportingDHISNoRef}
                             type='radio'
-                            checked={formState.reporting_in_dhis !== null ? !Boolean(formState.reporting_in_dhis) : false}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: false })
-                            }}
+                            value={formik.values.reporting_in_dhis !== undefined ? !Boolean(formik.values.reporting_in_dhis) : false}
+                            onChange={formik.handleChange}
                             name='reporting_in_dhis'
                             id='reporting_in_dhis_no'
 
@@ -1018,13 +958,10 @@ export function BasicDetailsForm() {
                         selectref={facilityAdmissionsRef}
                         options={options['5']?.facility_admission_status}
                         required
-                        placeholder='Select an admission status..'
-                        onChange={(e) => {
-                           
-                            dispatch({ type: 'admission_status', value: { value: e.target.value } })
-                        }}
+                        placeholder="Select an admission status..."
+                        onChange={formik.handleChange}
                         name='admission_status'
-                        className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+                        
                     />
                 </div>
 
@@ -1038,11 +975,10 @@ export function BasicDetailsForm() {
                     </label>
                     <span className='flex items-center gap-x-1'>
                         <input
+                            ref={nhifYesRef}
                             type='radio'
-                            checked={formState.nhif_accreditation !== null ? Boolean(formState.nhif_accreditation) : false}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: true })
-                            }}
+                            value={formik.values.nhif_accreditation !== undefined ? Boolean(formik.values.nhif_accreditation) : false}
+                            onChange={formik.handleChange}
                             name='nhif_accreditation'
                             id='nhif_accreditation_yes'
 
@@ -1051,11 +987,10 @@ export function BasicDetailsForm() {
                     </span>
                     <span className='flex items-center gap-x-1'>
                         <input
+                            ref={nhifNoRef}
                             type='radio'
-                            checked={formState.nhif_accreditation !== null ? !Boolean(formState.nhif_accreditation) : false}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: false })
-                            }}
+                            value={formik.values.nhif_accreditation !== undefined ? !Boolean(formik.values.nhif_accreditation) : false}
+                            onChange={formik.handleChange}
                             name='nhif_accreditation'
                             id='nhif_accreditation_no'
 
@@ -1073,10 +1008,8 @@ export function BasicDetailsForm() {
                     <div className='w-full flex flex-row items-center px-2 justify-  gap-1 gap-x-3 mb-3'>
                         <input
                             type='checkbox'
-                            checked={formState.is_classified}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: e.target.checked })
-                            }}
+                            value={formik.values.is_classified}
+                            onChange={formik.handleChange}
                             name='is_classified'
                             id='is_armed_forces'
 
@@ -1102,10 +1035,8 @@ export function BasicDetailsForm() {
 
                             name='open_whole_day'
                             id='open_24hrs'
-                            checked={formState.open_whole_day}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: e.target.checked })
-                            }}
+                            value={formik.values.open_whole_day}
+                            onChange={formik.handleChange}
 
                         />
                         <label
@@ -1122,10 +1053,8 @@ export function BasicDetailsForm() {
 
                             name='open_late_night'
                             id='open_late_night'
-                            checked={formState.open_late_night}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: e.target.checked })
-                            }}
+                            value={formik.values.open_late_night}
+                            onChange={formik.handleChange}
 
 
                         />
@@ -1143,10 +1072,8 @@ export function BasicDetailsForm() {
 
                             name='open_public_holidays'
                             id='open_public_holidays'
-                            checked={formState.open_public_holidays}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: e.target.checked })
-                            }}
+                            value={formik.values.open_public_holidays}
+                            onChange={formik.handleChange}
 
 
                         />
@@ -1164,10 +1091,8 @@ export function BasicDetailsForm() {
 
                             name='open_weekends'
                             id='open_weekends'
-                            checked={formState.open_weekends}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: e.target.checked })
-                            }}
+                            value={formik.values.open_weekends}
+                            onChange={formik.handleChange}
 
                         />
                         <label
@@ -1184,10 +1109,8 @@ export function BasicDetailsForm() {
 
                             name='open_normal_day'
                             id='open_8_5'
-                            checked={formState.open_normal_day}
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: e.target.checked })
-                            }}
+                            value={formik.values.open_normal_day}
+                            onChange={formik.handleChange}
 
                         />
                         <label
@@ -1221,13 +1144,10 @@ export function BasicDetailsForm() {
                                     selectref={countyRef}
                                     options={options['6']?.counties}
                                     required
-                                    placeholder='Select County'
-                                    onChange={(e) => {
-                                        dispatch({ type: 'county_id', value: { value: e.target.value } })
-                                    }}
-
+                                    placeholder="Select County ..."
+                                    onChange={formik.handleChange}
                                     name='county_id'
-                                    className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+                                    
                                 />
                             </div>
                         </div>
@@ -1248,14 +1168,11 @@ export function BasicDetailsForm() {
                                     selectref={subCountyRef}
                                     options={options['7']?.sub_counties}
                                     required
-                                    placeholder='Select Sub County'
-                                    onChange={(e) => {
-                                       
-                                        dispatch({ type: 'sub_county_id', value: { value: e.target.value } })
-                                    }}
+                                    placeholder="Select Sub County..."
+                                    onChange={formik.handleChange}
                                     name='sub_county_id'
 
-                                    className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+                                    
                                 />
                             </div>
                         </div>
@@ -1276,13 +1193,11 @@ export function BasicDetailsForm() {
                                     selectref={constituencyRef}
                                     options={options['8']?.constituencies}
                                     required
-                                    placeholder='Select Constituency'
-                                    onChange={(e) => {
-                                        
-                                        dispatch({ type: 'constituency_id', value: { value: e.target.value } })
-                                    }}
+                                    placeholder="Select Constituency..."
+                                    onChange={formik.handleChange}
                                     name='constituency_id'
-                                    className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+
+                                    
                                 />
                             </div>
                         </div>
@@ -1303,13 +1218,10 @@ export function BasicDetailsForm() {
                                     selectref={wardRef}
                                     options={options['9']?.wards}
                                     required
-                                    placeholder='Select Ward'
-                                    onChange={(e) => {
-                                        
-                                        dispatch({ type: 'ward', value: { value: e.target.value } })
-                                    }}
+                                    placeholder="Select Ward ..."
+                                    onChange={formik.handleChange}
                                     name='ward'
-                                    className='flex-none w-full bg-gray-50 rounded flex-grow  placeholder-gray-500 focus:bg-white focus:border-gray-200 outline-none'
+                                    
                                 />
                             </div>
                         </div>
@@ -1328,11 +1240,8 @@ export function BasicDetailsForm() {
                         </label>
                         <input
                             type='text'
-                            onChange={(e) => {
-
-                                dispatch({ type: e.target.name, value: e.target.value })
-                            }}
-                            value={formState.town_name}
+                            onChange={formik.handleChange}
+                            value={formik.values.town_name}
                             name='town_name'
                             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                         />
@@ -1353,11 +1262,8 @@ export function BasicDetailsForm() {
                         <input
 
                             type='text'
-                            onChange={(e) => {
-
-                                dispatch({ type: e.target.name, value: e.target.value })
-                            }}
-                            value={formState.plot_number}
+                            onChange={formik.handleChange}
+                            value={formik.values.plot_number}
                             name='plot_number'
                             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                         />
@@ -1378,10 +1284,8 @@ export function BasicDetailsForm() {
 
                             type='text'
                             name='nearest_landmark'
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: e.target.value })
-                            }}
-                            value={formState.nearest_landmark}
+                            onChange={formik.handleChange}
+                            value={formik.values.nearest_landmark}
                             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                         />
                     </div>
@@ -1400,10 +1304,8 @@ export function BasicDetailsForm() {
                         <input
 
                             type='text'
-                            onChange={(e) => {
-                                dispatch({ type: e.target.name, value: e.target.value })
-                            }}
-                            value={formState.location_desc}
+                            onChange={formik.handleChange}
+                            value={formik.values.location_desc}
                             name='location_desc'
                             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                         />
@@ -1425,9 +1327,9 @@ export function BasicDetailsForm() {
 
                         <input
                             required
-
+                            value={formik.values.facility_checklist_document}
                             type='file'
-                            onChange={(e) => null}
+                            onChange={formik.handleChange}
                             name='facility_checklist_document'
                             className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
                         />
