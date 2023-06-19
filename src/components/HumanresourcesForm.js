@@ -90,7 +90,7 @@ export function HumanresourcesForm() {
       className='flex flex-col w-full items-start justify-start gap-3'
     >
       {
-        console.log('rerendering...')
+        console.log('rerendering form...')
       }
       <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
         <label

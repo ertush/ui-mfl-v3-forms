@@ -224,6 +224,8 @@ export function BasicDetailsForm() {
 
 
         if (facilityTypeDetailsRef.current !== null) {
+            // console.log({facility_type_details: JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type_details})
+
             facilityTypeDetailsRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.facility_type_details;
         }
 
@@ -262,6 +264,67 @@ export function BasicDetailsForm() {
         if (wardRef.current !== null) {
             wardRef.current.value = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.ward;
         }
+
+        // Updating radio inputs
+
+        if(accreditedYesRef.current !== null
+            && accreditedNoRef.current !== null
+            ){
+              const yes = Boolean(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.accredited_lab_iso_15189);
+              const no = !yes
+            
+            console.log({yes, no})
+            accreditedYesRef.current.checked = yes;
+            accreditedNoRef.current.checked = no;
+          }
+
+          if(nhifYesRef.current !== null
+            && nhifNoRef.current !== null
+            ){
+              const yes = Boolean(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.nhif_accreditation);
+              const no = !yes
+            
+            console.log({yes, no})
+            nhifYesRef.current.checked = yes;
+            nhifNoRef.current.checked = no;
+          }
+
+           if(reportingDHISYesRef.current !== null
+            && reportingDHISNoRef.current !== null
+            ){
+              const yes = Boolean(JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.reporting_in_dhis);
+              const no = !yes
+            
+            console.log({yes, no})
+            reportingDHISYesRef.current.checked = yes;
+            reportingDHISNoRef.current.checked = no;
+          }
+
+          // Updating checkboxes
+      
+          if(isClassifiedRef.current !== null) {
+            isClassifiedRef.current.checked = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.is_classified;
+          }
+
+          if(open24hrsRef.current !== null) {
+            open24hrsRef.current.checked = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.open_whole_day;
+          }
+
+          if(openLateNightRef.current !== null) {
+            openLateNightRef.current.checked = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.open_late_night;
+          }
+
+          if(openPublicHdaysRef.current !== null) {
+            openPublicHdaysRef.current.checked = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.open_public_holidays;
+          }
+
+          if(openNormalDayRef.current !== null) {
+            openNormalDayRef.current.checked = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.open_normal_day;
+          }
+
+          if(openWeekendsRef.current !== null) {
+            openWeekendsRef.current.checked = JSON.parse(window.sessionStorage.getItem('basicDetailsForm'))?.open_weekends;
+          }
     }
 
  
@@ -399,13 +462,21 @@ export function BasicDetailsForm() {
     const nhifNoRef = useRef(null);
     const reportingDHISYesRef = useRef(null);
     const reportingDHISNoRef = useRef(null);
+    const open24hrsRef = useRef(null);
+    const openLateNightRef = useRef(null);
+    const openPublicHdaysRef = useRef(null);
+    const openWeekendsRef = useRef(null);
+    const openNormalDayRef = useRef(null);
+    const isClassifiedRef = useRef(null);
+
+
 
     return (
         <>
 
         {
             // debug area for form
-            // console.log({constituencies: options['8']?.constituencies})
+            console.log('Rerendering Basic Details form....')
         
             
         }
@@ -1007,6 +1078,7 @@ export function BasicDetailsForm() {
                     </h4>
                     <div className='w-full flex flex-row items-center px-2 justify-  gap-1 gap-x-3 mb-3'>
                         <input
+                            ref={isClassifiedRef}
                             type='checkbox'
                             value={formik.values.is_classified}
                             onChange={formik.handleChange}
@@ -1031,8 +1103,8 @@ export function BasicDetailsForm() {
                     </h4>
                     <div className='w-full flex flex-row items-center px-2 justify-  gap-1 gap-x-3 mb-3'>
                         <input
+                            ref={open24hrsRef}
                             type='checkbox'
-
                             name='open_whole_day'
                             id='open_24hrs'
                             value={formik.values.open_whole_day}
@@ -1049,8 +1121,8 @@ export function BasicDetailsForm() {
 
                     <div className='w-full flex flex-row items-center px-2 justify-  gap-1 gap-x-3 mb-3'>
                         <input
+                            ref={openLateNightRef}
                             type='checkbox'
-
                             name='open_late_night'
                             id='open_late_night'
                             value={formik.values.open_late_night}
@@ -1068,8 +1140,8 @@ export function BasicDetailsForm() {
 
                     <div className='w-full flex flex-row items-center px-2 justify-  gap-1 gap-x-3 mb-3'>
                         <input
+                            ref={openPublicHdaysRef}
                             type='checkbox'
-
                             name='open_public_holidays'
                             id='open_public_holidays'
                             value={formik.values.open_public_holidays}
@@ -1087,8 +1159,8 @@ export function BasicDetailsForm() {
 
                     <div className='w-full flex flex-row items-center px-2 justify-  gap-1 gap-x-3 mb-3'>
                         <input
+                            ref={openWeekendsRef}
                             type='checkbox'
-
                             name='open_weekends'
                             id='open_weekends'
                             value={formik.values.open_weekends}
@@ -1105,8 +1177,8 @@ export function BasicDetailsForm() {
 
                     <div className='w-full flex flex-row items-center px-2 justify-  gap-1 gap-x-3 mb-3'>
                         <input
+                            ref={openNormalDayRef}
                             type='checkbox'
-
                             name='open_normal_day'
                             id='open_8_5'
                             value={formik.values.open_normal_day}
