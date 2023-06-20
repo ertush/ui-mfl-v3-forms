@@ -20,6 +20,8 @@ function RenderForm() {
    const facilityTypeDetailsRef = useRef(null);
    const kephLevelRef = useRef(null);
 
+ 
+
   // Form Options
 
   const facilityTypeOptions = (() => {
@@ -95,6 +97,34 @@ function RenderForm() {
     }
 
   })()
+
+  // Effects
+
+useEffect(() => {
+  if (window && window.sessionStorage.getItem('infra_form')) {
+    values.facility_type_details = JSON.parse(window.sessionStorage.getItem('infra_form')).facility_type_details ;
+  }
+},[])
+
+ 
+ useEffect(() => {
+  
+  values.number_of_beds = (Number(values.number_of_inpatient_beds) ?? 0) + 
+                          (Number(values.number_of_icu_beds) ?? 0) + 
+                          (Number(values.number_of_hdu_beds) ?? 0) + 
+                          (Number(values.number_of_maternity_beds) ?? 0) +
+                          (Number(values.number_of_emergency_casualty_beds) ?? 0);
+    
+    
+ },[
+  values.number_of_inpatient_beds,
+  values.number_of_icu_beds,
+  values.number_of_hdu_beds,
+  values.number_of_maternity_beds,
+  values.number_of_emergency_casualty_beds
+]
+)
+
 
   return (
     <>
@@ -196,6 +226,231 @@ function RenderForm() {
               </span>
             </div>
 
+
+                {/* Total Functional In-patient Beds */}
+                <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                    <label
+                        htmlFor='number_of_beds'
+                        className='text-gray-600 capitalize text-sm'>
+                        Total Functional In-patient Beds
+                        <span className='text-medium leading-12 font-semibold'>
+                            {' '}
+                            *
+                        </span>
+                    </label>
+                    <Field
+                        required
+                        type='number'
+                        min={0}
+                        name='number_of_beds'
+                        readOnly
+                        className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                    />
+
+
+                </div>
+
+
+                {/* No of General In-patient Beds */}
+                <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                    <label
+                        htmlFor='number_of_inpatient_beds'
+                        className='text-gray-600 capitalize text-sm'>
+                        Number of General In-patient Beds
+                        <span className='text-medium leading-12 font-semibold'>
+                            {' '}
+                            *
+                        </span>
+                    </label>
+                    <Field
+                        required
+                        type='number'
+                        min={0}
+                        name='number_of_inpatient_beds'
+                        className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                    />
+                    <label className='text-red-500 mt-1'></label>
+
+
+                </div>
+
+                {/* No. Functional cots */}
+                <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                    <label
+                        htmlFor='number_of_cots'
+                        className='text-gray-600 capitalize text-sm'>
+                        Number of Functional Cots
+                        <span className='text-medium leading-12 font-semibold'>
+                            {' '}
+                            *
+                        </span>
+                    </label>
+                    <Field
+                        required
+                        type='number'
+                        min={0}
+                        name='number_of_cots'
+                        className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                    />
+                    <label className='text-red-500 mt-1'></label>
+                </div>
+
+                {/* No. Emergency Casulty Beds */}
+                <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                    <label
+                        htmlFor='number_of_emergency_casualty_beds'
+                        className='text-gray-600 capitalize text-sm'>
+                        Number of Emergency Casulty Beds
+                        <span className='text-medium leading-12 font-semibold'>
+                            {' '}
+                            *
+                        </span>
+                    </label>
+                    <Field
+                        required
+                        type='number'
+                        min={0}
+                        name='number_of_emergency_casualty_beds'
+                        className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                    />
+                    <label className='text-red-500 mt-1'></label>
+
+                </div>
+
+
+                {/* No. Intensive Care Unit Beds */}
+                <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                    <label
+                        htmlFor='number_of_icu_beds'
+                        className='text-gray-600 capitalize text-sm'>
+                        Number of Intensive Care Unit (ICU) Beds
+                        <span className='text-medium leading-12 font-semibold'>
+                            {' '}
+                            *
+                        </span>
+                    </label>
+                    <Field
+                        required
+                        type='number'
+                        min={0}
+                        name='number_of_icu_beds'
+                        className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                    />
+                    <label className='text-red-500 mt-1'></label>
+
+                </div>
+
+
+                {/* No. High Dependency Unit HDU */}
+                <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                    <label
+                        htmlFor='number_of_hdu_beds'
+                        className='text-gray-600 capitalize text-sm'>
+                        Number of High Dependency Unit (HDU) Beds
+                        <span className='text-medium leading-12 font-semibold'>
+                            {' '}
+                            *
+                        </span>
+                    </label>
+                    <Field
+                        required
+                        type='number'
+                        min={0}
+                        name='number_of_hdu_beds'
+                        className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                    />
+                    <label className='text-red-500 mt-1'></label>
+
+                </div>
+
+                {/* No. of maternity beds */}
+                <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                    <label
+                        htmlFor='number_of_maternity_beds'
+                        className='text-gray-600 capitalize text-sm'>
+                        Number of Maternity Beds
+                        <span className='text-medium leading-12 font-semibold'>
+                            {' '}
+                            *
+                        </span>
+                    </label>
+                    <Field
+                        required
+                        type='number'
+                        min={0}
+                        name='number_of_maternity_beds'
+                        className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                    />
+                    <label className='text-red-500 mt-1'></label>
+
+                </div>
+
+                {/* No. of Isolation Beds */}
+                <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                    <label
+                        htmlFor='number_of_isolation_beds'
+                        className='text-gray-600 capitalize text-sm'>
+                        Number of Isolation Beds
+                        <span className='text-medium leading-12 font-semibold'>
+                            {' '}
+                            *
+                        </span>
+                    </label>
+                    <Field
+                        required
+                        type='number'
+                        min={0}
+                        name='number_of_isolation_beds'
+                        className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                    />
+                    <label className='text-red-500 mt-1'></label>
+
+                </div>
+
+                {/* No. of General Theatres */}
+                <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                    <label
+                        htmlFor='number_of_general_theatres'
+                        className='text-gray-600 capitalize text-sm'>
+                        Number of General Theatres
+                        <span className='text-medium leading-12 font-semibold'>
+                            {' '}
+                            *
+                        </span>
+                    </label>
+                    <Field
+                        required
+                        type='number'
+                        min={0}
+                        name='number_of_general_theatres'
+                        className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                    />
+                    <label className='text-red-500 mt-1'></label>
+
+                </div>
+
+                {/* No. of Maternity Theatres */}
+                <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                    <label
+                        htmlFor='number_of_maternity_theatres'
+                        className='text-gray-600 capitalize text-sm'>
+                        Number of Maternity Theatres
+                        <span className='text-medium leading-12 font-semibold'>
+                            {' '}
+                            *
+                        </span>
+                    </label>
+                    <Field
+                        required
+                        type='number'
+                        min={0}
+                        name='number_of_maternity_theatres'
+                        className='flex-none w-full bg-gray-50 rounded p-2 flex-grow border-2 placeholder-gray-500 border-gray-200 focus:shadow-none focus:bg-white focus:border-black outline-none'
+                    />
+                    <label className='text-red-500 mt-1'></label>
+
+                </div>
+
             {/* Facility Type */}
 
             <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
@@ -232,7 +487,7 @@ function RenderForm() {
               </label>
               <Select
                 ref={facilityTypeDetailsRef}
-                options={facilityTypeDetailOptions}
+                options={facilityTypeDetailOptions ?? [{label:'A', value: 0}, {label:'B', value: 1}, {label:'C', value: 2}]}
                 placeholder="Select facility type details..."
                 required
                 name='facility_type_details'
@@ -257,6 +512,107 @@ function RenderForm() {
               />
             </div>
 
+             {/* Location Details */}
+             <div className=' w-full flex flex-col items-start justify-start p-3 rounded border border-gray-300/70 bg-gray-50 h-auto'>
+                    <h4 className='text-lg uppercase pb-2 border-b border-gray-100 w-full mb-4 font-semibold text-blue-900'>
+                        Location Details
+                    </h4>
+                    <div className='grid grid-cols-4 place-content-start gap-3 w-full'>
+                        {/* County  */}
+                        <div className='col-start-1 col-span-1'>
+                            <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                                <label
+                                    htmlFor='county_id'
+                                    className='text-gray-600 capitalize text-sm'>
+                                    County
+                                    <span className='text-medium leading-12 font-semibold'>
+                                        {' '}
+                                        *
+                                    </span>
+                                </label>
+                                <Select
+                                    options={options['6']?.counties}
+                                    required
+                                    placeholder="Select County ..."
+                                    name='county_id'
+                                    
+                                />
+                            </div>
+                        </div>
+
+                        {/* Sub-county */}
+                        <div className='col-start-2 col-span-1'>
+                            <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                                <label
+                                    htmlFor='sub_county_id'
+                                    className='text-gray-600 capitalize text-sm'>
+                                    Sub-county
+                                    <span className='text-medium leading-12 font-semibold'>
+                                        {' '}
+                                        *
+                                    </span>
+                                </label>
+                                <Select
+                                    options={options['7']?.sub_counties}
+                                    required
+                                    placeholder="Select Sub County..."
+                                    name='sub_county_id'
+
+                                    
+                                />
+                            </div>
+                        </div>
+
+                        {/* Constituency */}
+                        <div className='col-start-3 col-span-1'>
+                            <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                                <label
+                                    htmlFor='constituency_id'
+                                    className='text-gray-600 capitalize text-sm'>
+                                    Constituency
+                                    <span className='text-medium leading-12 font-semibold'>
+                                        {' '}
+                                        *
+                                    </span>
+                                </label>
+                                <Select
+                                    options={options['8']?.constituencies}
+                                    required
+                                    placeholder="Select Constituency..."
+                                    name='constituency_id'
+
+                                    
+                                />
+                            </div>
+                        </div>
+
+                        {/* Ward */}
+                        <div className='col-start-4 col-span-1'>
+                            <div className='w-full flex flex-col items-start justify-start gap-1 mb-3'>
+                                <label
+                                    htmlFor='ward'
+                                    className='text-gray-600 capitalize text-sm'>
+                                    Ward
+                                    <span className='text-medium leading-12 font-semibold'>
+                                        {' '}
+                                        *
+                                    </span>
+                                </label>
+                                <Select
+                                    options={options['9']?.wards}
+                                    required
+                                    placeholder="Select Ward ..."
+                                    name='ward'
+                                    
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                   
+                </div>
+
+
             <button onClick={() => { setFormId(prev => (prev - 1)) }}>Previous</button>
             <button type="submit">Submit</button>
     </>
@@ -275,28 +631,27 @@ export function InfrastructureForm() {
     facility_type_details:"",
     keph_level:"",
     is_classified: "",
-    accredited_lab_iso_15189: ""
+    accredited_lab_iso_15189: "",
+    number_of_beds: "",
+    number_of_inpatient_beds: "",
+    number_of_cots: "",
+    number_of_emergency_casualty_beds: "",
+    number_of_icu_beds: "",
+    number_of_hdu_beds: "",
+    number_of_maternity_beds: "",
+    number_of_isolation_beds: "",
+    number_of_general_theatres: "",
+    number_of_maternity_theatres: ""
   })
   
 
   // Effects
 
   useEffect(() => {
-    console.log('inside effect...')
     if (window && window.sessionStorage.getItem('infra_form')) {
       setInitialValues(JSON.parse(window.sessionStorage.getItem('infra_form')))
     }
   }, [])
-
-
-  // useEffect(() => {
-  //   console.log("running facility Type effect...")
-  //    if(facilityTypeRef.current !== null){
-  //   console.log({facility_type: facilityTypeRef.current?.value})
-
-  // }
-
-  // }, [])
 
  
   // Render
@@ -322,7 +677,7 @@ export function InfrastructureForm() {
             className='flex flex-col w-full items-start justify-start gap-3'
           >
 
-          <RenderForm />
+          <RenderForm  />
 
 
           </Form>
