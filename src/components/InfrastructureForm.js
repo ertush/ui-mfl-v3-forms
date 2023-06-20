@@ -3,6 +3,7 @@ import { Formik, Form, Field, useFormikContext } from 'formik';
 import { useEffect, useState, useRef, useContext } from 'react';
 import Select from '../components/formComponents/FromikSelect';
 import { FormOptionsContext } from '@/pages';
+import  useSWR  from 'swr';
 
 
 function RenderForm() {
@@ -45,6 +46,7 @@ function RenderForm() {
     }));
 
   })()
+
 
 
   const facilityTypeDetailOptions = (() => {
@@ -124,6 +126,7 @@ useEffect(() => {
   values.number_of_emergency_casualty_beds
 ]
 )
+
 
 
   return (
